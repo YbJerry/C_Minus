@@ -9,17 +9,25 @@ static TreeNode *savedTree;
 static char *savedName;
 %}
 
-%union {
-    TreeNode * tree;
-    ExpType type;
-}
-
 %token ID NUM
 %token IF ELSE INT RETURN VOID WHILE
 %token PLUS MINUS TIMES DIVIDE LT LEQ GT GEQ EQ NEQ ASSIGN SEMICOLON COMMA LPAREN RPAREN LBRACKET RBRACKET LBRACE RBRACE
 %token ERROR
 
-%type <tree> program declaration-list declaration var-declaration
+%union {
+    TreeNode * tree;
+    ExpType type;
+    int op;
+}
+
+%type <tree> program declaration-list declaration var-declaration fun-declaration 
+%type <tree> params param-list param
+%type <tree> compound-stmt local-declarations statement-list statement
+%type <tree> expression-stmt selection-stmt iteration-stmt return-stmt
+%type <tree> expression var simple-expression additive-expression
+%type <tree> term factor call args arg-list
+%type <type> type-specifier 
+%type <op> relop addop mulop
 
 %%
 
@@ -65,8 +73,8 @@ LBRACKET NUM RBRACKET SEMICOLON {
 ;
 
 type-specifier:
-INT
-| VOID
+INT     {return Int;}
+| VOID  {return Void;}
 ;
 
 fun-declaration:

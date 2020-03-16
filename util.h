@@ -12,4 +12,8 @@ TreeNode * newDecNode(DecKind kind);
 
 char * copyString(char *str);
 
+void printTree(TreeNode *tree);
+void printNode(TreeNode *node);
+void printSpaces();
+
 #endif

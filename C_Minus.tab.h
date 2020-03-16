@@ -39,6 +39,12 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 18 "C_Minus.y" /* yacc.c:1909  */
+
+    #include "globals.h"
+
+#line 48 "C_Minus.tab.h" /* yacc.c:1909  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -81,13 +87,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 17 "C_Minus.y" /* yacc.c:1909  */
+#line 22 "C_Minus.y" /* yacc.c:1909  */
 
     TreeNode * tree;
     ExpType type;
     int op;
 
-#line 91 "C_Minus.tab.h" /* yacc.c:1909  */
+#line 97 "C_Minus.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

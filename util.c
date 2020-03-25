@@ -33,7 +33,6 @@ TreeNode * newExpNode(ExpKind kind){
     res->nodeKind = ExpK;
     res->kind.exp = kind;
     
-
     return res;
 }
 
@@ -85,6 +84,15 @@ void printNode(TreeNode *node){
                 printf("fun-declaration\n");
                 break;
         }
+    }else if(node->nodeKind == ExpK){
+        switch(node->kind.exp){
+            case OpK:
+                printf("op: %s\n", tokenTrans(node->attr.op));
+                break;
+            case IdK:
+                printf("id: %s\n", node->attr.name);
+                break;
+        }
     }
 }
 
@@ -92,5 +100,48 @@ void printSpaces(){
     int i;
     for(i = 0; i < treeLevel; ++i){
         putchar(' ');
+    }
+}
+
+char * tokenTrans(TokenType op){
+    switch(op){
+        case PLUS:
+            return "+";
+        case MINUS:
+			return "-";
+        case TIMES:
+			return "*";
+        case DIVIDE:
+			return "/";
+        case LT:
+			return "<"; 
+        case LEQ:
+			return "<=";
+        case GT:
+			return ">";
+        case GEQ:
+			return ">=";
+        case EQ:
+			return "==";
+        case NEQ:
+			return "!=";
+        case ASSIGN:
+			return "=";
+        case SEMICOLON:
+			return ";";
+        case COMMA:
+			return ",";
+ 		case LPAREN:
+			return "(";
+ 		case RPAREN:
+			return ")";
+ 		case LBRACKET:
+			return "[";
+ 		case RBRACKET:
+			return "]";
+ 		case LBRACE:
+			return "{";
+ 		case RBRACE:
+			return "}";
     }
 }

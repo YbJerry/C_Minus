@@ -25,14 +25,15 @@ static char *savedName;
     int op;
 }
 
-%type <tree> program declaration-list declaration var-declaration // fun-declaration 
-// %type <tree> params param-list param
-// %type <tree> compound-stmt local-declarations statement-list statement
-// %type <tree> expression-stmt selection-stmt iteration-stmt return-stmt
-// %type <tree> expression var simple-expression additive-expression
+%type <tree> program declaration-list declaration var-declaration fun-declaration 
+%type <tree> params param-list param
+%type <tree> compound-stmt local-declarations statement-list statement
+%type <tree> expression-stmt //selection-stmt iteration-stmt return-stmt
+%type <tree> expression var //simple-expression additive-expression
 // %type <tree> term factor call args arg-list
 %type <type> type-specifier 
 // %type <op> relop addop mulop
+%type <tree> empty
 
 %start program
 
@@ -58,7 +59,7 @@ declaration-list declaration    {
 
 declaration:
 var-declaration {$$ = $1;}
-// | fun-declaration   {$$ = $1;}
+| fun-declaration   {$$ = $1;}
 ;
 
 var-declaration:
@@ -85,52 +86,109 @@ INT     {$$ = Int;}
 | VOID  {$$ = Void;}
 ;
 
-// fun-declaration:
-// type-specifier ID LPAREN params RPAREN
-// | compound-stmt
-// ;
+fun-declaration:
+type-specifier ID {
+    savedName = copyString(tokenString);
+}
+LPAREN params RPAREN compound-stmt {
+    $$ = newDecNode(FunK);
+    $$->attr.name = savedName;
+    $$->child[0] = $5;
+    $$->child[1] = $7;
+    $$->type = $1;
+}
+;
 
-// params:
-// param-list
-// | VOID
-// ;
+params:
+param-list { $$ = $1; }
+| VOID {$$ = NULL;printf("NULL\n");}
+;
 
-// param-list:
-// param-list COMMA param
-// | param
-// ;
+param-list:
+param-list COMMA param {
+    TreeNode *t = $1;
+    while(!t->sibling){
+        t = t->sibling;
+    }
+    t->sibling = $3;
+    $$ = $1;
+}
+| param { $$ = $1; }
+;
 
-// param:
-// type-specifier ID
-// | type-specifier ID LBRACKET RBRACKET
-// ;
+param:
+type-specifier ID {
+    savedName = copyString(tokenString);
+    $$ = newDecNode(VarK);
+    $$->attr.name = savedName;
+    $$->type = $1;
+}
+| type-specifier ID{
+    savedName = copyString(tokenString);
+} 
+LBRACKET RBRACKET{
+    $$ = newDecNode(VarK);
+    $$->attr.name = savedName;
+    $$->type = Array;
+}
+;
 
-// compound-stmt:
-// LBRACE local-declarations statement-list RBRACE
-// ;
+compound-stmt:
+LBRACE local-declarations statement-list RBRACE {
+    $$ = newStmNode(CompoundK);
+    $$->child[0] = $2;
+    $$->child[1] = $3;
+}
+;
 
-// local-declarations:
-// local-declarations var-declaration
-// | empty
-// ;
+local-declarations:
+local-declarations var-declaration {
+    TreeNode *t = $1;
+    // 如果local-declaration为empty状态时，
+    // 在empty中生成语法树会有奇奇怪怪的问题，放到这里最佳
+    if(!t)
+        $$ = $2;
+    else{
+        while(!t->sibling){
+            t = t->sibling;
+        }
+        t->sibling = $2;
+        $$ = $1;
+    }
+}
+| %empty {$$ = NULL;}
+;
 
-// statement-list:
-// statement-list statement
-// | empty
-// ;
+statement-list:
+statement-list statement {
+    TreeNode *t = $1;
+    if(!t)
+        $$ = $2;
+    else{
+        while(!t->sibling){
+            t = t->sibling;
+        }
+        t->sibling = $2;
+        $$ = $1;
+    }
+}
+| %empty {$$ = NULL;}
+;
 
-// statement:
-// expression-stmt
-// | compound-stmt
-// | selection-stmt
-// | iteration-stmt
-// | return-stmt
-// ;
+statement:
+expression-stmt {$$ = $1;}
+| compound-stmt {$$ = $1;}
+// | selection-stmt {$$ = $1;}
+// | iteration-stmt {$$ = $1;}
+// | return-stmt {$$ = $1;}
+;
 
-// expression-stmt:
-// expression SEMICOLON
-// | SEMICOLON
-// ;
+expression-stmt:
+expression SEMICOLON {
+    $$ = $1;
+}
+| SEMICOLON {$$ = NULL;}
+;
 
 // selection-stmt:
 // IF LPAREN expression RPAREN statement
@@ -146,15 +204,31 @@ INT     {$$ = Int;}
 // | RETURN expression SEMICOLON
 // ;
 
-// expression:
-// var ASSIGN expression
-// | simple-expression
-// ;
+expression:
+var ASSIGN expression {
+    $$ = newExpNode(OpK);
+    $$->attr.op = ASSIGN; 
+    $$->child[0] = $1;
+    $$->child[1] = $3;
+}
+// | simple-expression {
+//     $$ = $1;
+// }
+;
 
-// var:
-// ID
-// | ID LBRACKET expression RBRACKET
-// ;
+var:
+ID { 
+    $$ = newExpNode(IdK);
+    $$->attr.name = copyString(tokenString);
+    $$->attr.type = Int;
+}
+| ID LBRACKET expression RBRACKET{
+    $$ = newExpNode(IdK);
+    $$->attr.name = copyString(tokenString);
+    $$->attr.type = Array;
+    $$->index = $3;
+}
+;
 
 // simple-expression:
 // additive-expression relop additive-expression
@@ -211,8 +285,8 @@ INT     {$$ = Int;}
 // | expression
 // ;
 
-// empty:
-// ;
+empty: %empty
+;
 
 %%
 

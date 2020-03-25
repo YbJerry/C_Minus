@@ -4,7 +4,7 @@
 #define MAXCHILDNUM 3
 
 typedef int TokenType;
-typedef enum {StmK, ExpK, DecK} NodeKind;
+typedef enum {StmK, ExpK, DecK, ComK} NodeKind;
 typedef enum {IfK, WhileK, ReturnK, CompoundK} StmKind;
 typedef enum {OpK, IdK} ExpKind;
 typedef enum {VarK, FunK} DecKind;
@@ -23,6 +23,7 @@ struct treeNode{
         void *address;
     }attr;
     ExpType type;
+    int index;
 };
 
 #endif

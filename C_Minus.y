@@ -1,4 +1,8 @@
 %{
+// switch (yyn)
+// 若想监控每个状态的变化，在C_Minus.tab.c中对上面一行打断点
+// 此外发现bison是后序遍历
+
 #include <stdio.h>
 #include "globals.h"
 #include "util.h"

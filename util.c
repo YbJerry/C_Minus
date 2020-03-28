@@ -83,6 +83,9 @@ void printNode(TreeNode *node){
             case FunK:
                 printf("fun-declaration\n");
                 break;
+            default:
+                printf("error\n");
+                break;
         }
     }else if(node->nodeKind == ExpK){
         switch(node->kind.exp){
@@ -93,6 +96,12 @@ void printNode(TreeNode *node){
                 printf("id: %s\n", node->attr.name);
                 break;
         }
+    }else if(node->nodeKind == StmK){
+
+    }else if(node->nodeKind == ComK){
+
+    }else{
+        printf("error\n");
     }
 }
 

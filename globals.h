@@ -23,7 +23,6 @@ struct treeNode{
         void *address;
     }attr;
     ExpType type;
-    int index;
 };
 
 #endif

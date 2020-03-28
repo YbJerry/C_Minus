@@ -32,12 +32,11 @@ static char *savedName;
 %type <tree> program declaration-list declaration var-declaration fun-declaration 
 %type <tree> params param-list param
 %type <tree> compound-stmt local-declarations statement-list statement
-%type <tree> expression-stmt //selection-stmt iteration-stmt return-stmt
+%type <tree> expression-stmt selection-stmt iteration-stmt return-stmt else-stmt
 %type <tree> expression var simple-expression additive-expression
 %type <tree> term factor call args arg-list
 %type <type> type-specifier 
 %type <op> relop addop mulop
-%type <tree> empty
 
 %start program
 
@@ -111,7 +110,7 @@ param-list { $$ = $1; }
 param-list:
 param-list COMMA param {
     TreeNode *t = $1;
-    while(!t->sibling){
+    while(t->sibling){
         t = t->sibling;
     }
     t->sibling = $3;
@@ -153,7 +152,7 @@ local-declarations var-declaration {
     if(!t)
         $$ = $2;
     else{
-        while(!t->sibling){
+        while(t->sibling){
             t = t->sibling;
         }
         t->sibling = $2;
@@ -169,7 +168,7 @@ statement-list statement {
     if(!t)
         $$ = $2;
     else{
-        while(!t->sibling){
+        while(t->sibling){
             t = t->sibling;
         }
         t->sibling = $2;
@@ -182,9 +181,9 @@ statement-list statement {
 statement:
 expression-stmt {$$ = $1;}
 | compound-stmt {$$ = $1;}
-// | selection-stmt {$$ = $1;}
-// | iteration-stmt {$$ = $1;}
-// | return-stmt {$$ = $1;}
+| selection-stmt {$$ = $1;}
+| iteration-stmt {$$ = $1;}
+| return-stmt {$$ = $1;}
 ;
 
 expression-stmt:
@@ -194,19 +193,40 @@ expression SEMICOLON {
 | SEMICOLON {$$ = NULL;}
 ;
 
-// selection-stmt:
-// IF LPAREN expression RPAREN statement
-// | IF LPAREN expression RPAREN statement ELSE statement
-// ;
+selection-stmt:
+IF LPAREN expression RPAREN statement else-stmt {
+    $$ = newStmNode(IfK);
+    $$->child[0] = $3;
+    $$->child[1] = $5;
+    $$->child[2] = $6;
+}
+;
 
-// iteration-stmt:
-// WHILE LPAREN expression RPAREN statement
-// ;
+else-stmt:
+ELSE statement{
+    $$ = $2;
+}
+| %empty {$$ = NULL;}
+;
 
-// return-stmt:
-// RETURN SEMICOLON
-// | RETURN expression SEMICOLON
-// ;
+iteration-stmt:
+WHILE LPAREN expression RPAREN statement {
+    $$ = newStmNode(WhileK);
+    $$->child[0] = $3;
+    $$->child[1] = $5;
+}
+;
+
+return-stmt:
+RETURN SEMICOLON {
+    $$ = newStmNode(ReturnK);
+}
+
+| RETURN expression SEMICOLON {
+    $$ = newStmNode(IfK);
+    $$->child[0] = $2;
+}
+;
 
 expression:
 var ASSIGN expression {
@@ -230,7 +250,7 @@ ID {
     $$ = newExpNode(IdK);
     $$->attr.name = copyString(tokenString);
     $$->type = Array;
-    $$->index = $3;
+    $$->child[0] = $3;
 }
 ;
 
@@ -285,8 +305,8 @@ TIMES { $$ = TIMES; }
 
 factor:
 LPAREN expression RPAREN { $$ = $2; }
-// | var { $$ = $1; }
-// | call { $$ = $1; }
+| var { $$ = $1; }
+| call { $$ = $1; }
 | NUM {
     char *temp = copyString(tokenString);
     $$ = newExpNode(NumK);
@@ -295,23 +315,31 @@ LPAREN expression RPAREN { $$ = $2; }
 ;
 
 call:
-ID LPAREN args RPAREN{
+ID {
+    savedName = copyString(tokenString);
+} LPAREN args RPAREN {
     $$ = newExpNode(CallK);
-    
+    $$->attr.name = savedName;
+    $$->child[0] = $4;
 }
 ;
 
-// args:
-// arg-list
-// | empty
-// ;
+args:
+arg-list
+| %empty { $$ = NULL; }
+;
 
-// arg-list:
-// arg-list COMMA expression
-// | expression
-// ;
-
-empty: %empty
+arg-list:
+arg-list COMMA expression {
+    TreeNode *t = $1;
+    while(t->sibling){
+        t = t->sibling;
+    }
+    t->sibling = $3;
+}
+| expression {
+    $$ = $1;
+}
 ;
 
 %%

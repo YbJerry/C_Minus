@@ -1,23 +1,9 @@
-Nonterminals useless in grammar
-
-   empty
-   arg-list
-   args
-   call
-
-
 Terminals unused in grammar
 
-   IF
-   ELSE
-   RETURN
-   WHILE
    ERROR
 
 
-Rules useless in grammar
-
-   52 empty: %empty
+State 102 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -69,71 +55,96 @@ Grammar
 
    26 statement: expression-stmt
    27          | compound-stmt
+   28          | selection-stmt
+   29          | iteration-stmt
+   30          | return-stmt
 
-   28 expression-stmt: expression SEMICOLON
-   29                | SEMICOLON
+   31 expression-stmt: expression SEMICOLON
+   32                | SEMICOLON
 
-   30 expression: var ASSIGN expression
-   31           | simple-expression
+   33 selection-stmt: IF LPAREN expression RPAREN statement else-stmt
 
-   32 var: ID
-   33    | ID LBRACKET expression RBRACKET
+   34 else-stmt: ELSE statement
+   35          | %empty
 
-   34 simple-expression: additive-expression relop additive-expression
-   35                  | additive-expression
+   36 iteration-stmt: WHILE LPAREN expression RPAREN statement
 
-   36 relop: LEQ
-   37      | LT
-   38      | GT
-   39      | GEQ
-   40      | EQ
-   41      | NEQ
+   37 return-stmt: RETURN SEMICOLON
+   38            | RETURN expression SEMICOLON
 
-   42 additive-expression: additive-expression addop term
-   43                    | term
+   39 expression: var ASSIGN expression
+   40           | simple-expression
 
-   44 addop: PLUS
-   45      | MINUS
+   41 var: ID
+   42    | ID LBRACKET expression RBRACKET
 
-   46 term: term mulop factor
-   47     | factor
+   43 simple-expression: additive-expression relop additive-expression
+   44                  | additive-expression
 
-   48 mulop: TIMES
-   49      | DIVIDE
+   45 relop: LEQ
+   46      | LT
+   47      | GT
+   48      | GEQ
+   49      | EQ
+   50      | NEQ
 
-   50 factor: LPAREN expression RPAREN
-   51       | NUM
+   51 additive-expression: additive-expression addop term
+   52                    | term
+
+   53 addop: PLUS
+   54      | MINUS
+
+   55 term: term mulop factor
+   56     | factor
+
+   57 mulop: TIMES
+   58      | DIVIDE
+
+   59 factor: LPAREN expression RPAREN
+   60       | var
+   61       | call
+   62       | NUM
+
+   63 $@5: %empty
+
+   64 call: ID $@5 LPAREN args RPAREN
+
+   65 args: arg-list
+   66     | %empty
+
+   67 arg-list: arg-list COMMA expression
+   68         | expression
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
 error (256)
-ID (258) 7 9 13 18 20 32 33
-NUM (259) 9 51
-IF (260)
-ELSE (261)
+ID (258) 7 9 13 18 20 41 42 64
+NUM (259) 9 62
+IF (260) 33
+ELSE (261) 34
 INT (262) 10
-RETURN (263)
+RETURN (263) 37 38
 VOID (264) 11 15
-WHILE (265)
-PLUS (266) 44
-MINUS (267) 45
-TIMES (268) 48
-DIVIDE (269) 49
-LT (270) 37
-LEQ (271) 36
-GT (272) 38
-GEQ (273) 39
-EQ (274) 40
-NEQ (275) 41
-ASSIGN (276) 30
-SEMICOLON (277) 7 9 28 29
-COMMA (278) 16
-LPAREN (279) 13 50
-RPAREN (280) 13 50
-LBRACKET (281) 9 20 33
-RBRACKET (282) 9 20 33
+WHILE (265) 36
+PLUS (266) 53
+MINUS (267) 54
+TIMES (268) 57
+DIVIDE (269) 58
+LT (270) 46
+LEQ (271) 45
+GT (272) 47
+GEQ (273) 48
+EQ (274) 49
+NEQ (275) 50
+ASSIGN (276) 39
+SEMICOLON (277) 7 9 31 32 37 38
+COMMA (278) 16 67
+LPAREN (279) 13 33 36 59 64
+RPAREN (280) 13 33 36 59 64
+LBRACKET (281) 9 20 42
+RBRACKET (282) 9 20 42
 LBRACE (283) 21
 RBRACE (284) 21
 ERROR (285)
@@ -176,27 +187,43 @@ local-declarations (46)
 statement-list (47)
     on left: 24 25, on right: 21 24
 statement (48)
-    on left: 26 27, on right: 24
+    on left: 26 27 28 29 30, on right: 24 33 34 36
 expression-stmt (49)
-    on left: 28 29, on right: 26
-expression (50)
-    on left: 30 31, on right: 28 30 33 50
-var (51)
-    on left: 32 33, on right: 30
-simple-expression (52)
-    on left: 34 35, on right: 31
-relop (53)
-    on left: 36 37 38 39 40 41, on right: 34
-additive-expression (54)
-    on left: 42 43, on right: 34 35 42
-addop (55)
-    on left: 44 45, on right: 42
-term (56)
-    on left: 46 47, on right: 42 43 46
-mulop (57)
-    on left: 48 49, on right: 46
-factor (58)
-    on left: 50 51, on right: 46 47
+    on left: 31 32, on right: 26
+selection-stmt (50)
+    on left: 33, on right: 28
+else-stmt (51)
+    on left: 34 35, on right: 33
+iteration-stmt (52)
+    on left: 36, on right: 29
+return-stmt (53)
+    on left: 37 38, on right: 30
+expression (54)
+    on left: 39 40, on right: 31 33 36 38 39 42 59 67 68
+var (55)
+    on left: 41 42, on right: 39 60
+simple-expression (56)
+    on left: 43 44, on right: 40
+relop (57)
+    on left: 45 46 47 48 49 50, on right: 43
+additive-expression (58)
+    on left: 51 52, on right: 43 44 51
+addop (59)
+    on left: 53 54, on right: 51
+term (60)
+    on left: 55 56, on right: 51 52 55
+mulop (61)
+    on left: 57 58, on right: 55
+factor (62)
+    on left: 59 60 61 62, on right: 55 56
+call (63)
+    on left: 64, on right: 61
+$@5 (64)
+    on left: 63, on right: 64
+args (65)
+    on left: 65 66, on right: 64
+arg-list (66)
+    on left: 67 68, on right: 65 67
 
 
 State 0
@@ -532,20 +559,27 @@ State 38
 
     ID         shift, and go to state 40
     NUM        shift, and go to state 41
-    SEMICOLON  shift, and go to state 42
-    LPAREN     shift, and go to state 43
+    IF         shift, and go to state 42
+    RETURN     shift, and go to state 43
+    WHILE      shift, and go to state 44
+    SEMICOLON  shift, and go to state 45
+    LPAREN     shift, and go to state 46
     LBRACE     shift, and go to state 30
-    RBRACE     shift, and go to state 44
+    RBRACE     shift, and go to state 47
 
-    compound-stmt        go to state 45
-    statement            go to state 46
-    expression-stmt      go to state 47
-    expression           go to state 48
-    var                  go to state 49
-    simple-expression    go to state 50
-    additive-expression  go to state 51
-    term                 go to state 52
-    factor               go to state 53
+    compound-stmt        go to state 48
+    statement            go to state 49
+    expression-stmt      go to state 50
+    selection-stmt       go to state 51
+    iteration-stmt       go to state 52
+    return-stmt          go to state 53
+    expression           go to state 54
+    var                  go to state 55
+    simple-expression    go to state 56
+    additive-expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
 
 
 State 39
@@ -562,339 +596,695 @@ State 39
 
 State 40
 
-   32 var: ID .
-   33    | ID . LBRACKET expression RBRACKET
+   41 var: ID .
+   42    | ID . LBRACKET expression RBRACKET
+   64 call: ID . $@5 LPAREN args RPAREN
 
-    LBRACKET  shift, and go to state 54
+    LBRACKET  shift, and go to state 61
 
-    $default  reduce using rule 32 (var)
+    LPAREN    reduce using rule 63 ($@5)
+    $default  reduce using rule 41 (var)
+
+    $@5  go to state 62
 
 
 State 41
 
-   51 factor: NUM .
+   62 factor: NUM .
 
-    $default  reduce using rule 51 (factor)
+    $default  reduce using rule 62 (factor)
 
 
 State 42
 
-   29 expression-stmt: SEMICOLON .
+   33 selection-stmt: IF . LPAREN expression RPAREN statement else-stmt
 
-    $default  reduce using rule 29 (expression-stmt)
+    LPAREN  shift, and go to state 63
 
 
 State 43
 
-   50 factor: LPAREN . expression RPAREN
+   37 return-stmt: RETURN . SEMICOLON
+   38            | RETURN . expression SEMICOLON
 
-    ID      shift, and go to state 40
-    NUM     shift, and go to state 41
-    LPAREN  shift, and go to state 43
+    ID         shift, and go to state 40
+    NUM        shift, and go to state 41
+    SEMICOLON  shift, and go to state 64
+    LPAREN     shift, and go to state 46
 
-    expression           go to state 55
-    var                  go to state 49
-    simple-expression    go to state 50
-    additive-expression  go to state 51
-    term                 go to state 52
-    factor               go to state 53
+    expression           go to state 65
+    var                  go to state 55
+    simple-expression    go to state 56
+    additive-expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
 
 
 State 44
+
+   36 iteration-stmt: WHILE . LPAREN expression RPAREN statement
+
+    LPAREN  shift, and go to state 66
+
+
+State 45
+
+   32 expression-stmt: SEMICOLON .
+
+    $default  reduce using rule 32 (expression-stmt)
+
+
+State 46
+
+   59 factor: LPAREN . expression RPAREN
+
+    ID      shift, and go to state 40
+    NUM     shift, and go to state 41
+    LPAREN  shift, and go to state 46
+
+    expression           go to state 67
+    var                  go to state 55
+    simple-expression    go to state 56
+    additive-expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+
+
+State 47
 
    21 compound-stmt: LBRACE local-declarations statement-list RBRACE .
 
     $default  reduce using rule 21 (compound-stmt)
 
 
-State 45
+State 48
 
    27 statement: compound-stmt .
 
     $default  reduce using rule 27 (statement)
 
 
-State 46
+State 49
 
    24 statement-list: statement-list statement .
 
     $default  reduce using rule 24 (statement-list)
 
 
-State 47
+State 50
 
    26 statement: expression-stmt .
 
     $default  reduce using rule 26 (statement)
 
 
-State 48
-
-   28 expression-stmt: expression . SEMICOLON
-
-    SEMICOLON  shift, and go to state 56
-
-
-State 49
-
-   30 expression: var . ASSIGN expression
-
-    ASSIGN  shift, and go to state 57
-
-
-State 50
-
-   31 expression: simple-expression .
-
-    $default  reduce using rule 31 (expression)
-
-
 State 51
 
-   34 simple-expression: additive-expression . relop additive-expression
-   35                  | additive-expression .
-   42 additive-expression: additive-expression . addop term
+   28 statement: selection-stmt .
 
-    PLUS   shift, and go to state 58
-    MINUS  shift, and go to state 59
-    LT     shift, and go to state 60
-    LEQ    shift, and go to state 61
-    GT     shift, and go to state 62
-    GEQ    shift, and go to state 63
-    EQ     shift, and go to state 64
-    NEQ    shift, and go to state 65
-
-    $default  reduce using rule 35 (simple-expression)
-
-    relop  go to state 66
-    addop  go to state 67
+    $default  reduce using rule 28 (statement)
 
 
 State 52
 
-   43 additive-expression: term .
-   46 term: term . mulop factor
+   29 statement: iteration-stmt .
 
-    TIMES   shift, and go to state 68
-    DIVIDE  shift, and go to state 69
-
-    $default  reduce using rule 43 (additive-expression)
-
-    mulop  go to state 70
+    $default  reduce using rule 29 (statement)
 
 
 State 53
 
-   47 term: factor .
+   30 statement: return-stmt .
 
-    $default  reduce using rule 47 (term)
+    $default  reduce using rule 30 (statement)
 
 
 State 54
 
-   33 var: ID LBRACKET . expression RBRACKET
+   31 expression-stmt: expression . SEMICOLON
 
-    ID      shift, and go to state 40
-    NUM     shift, and go to state 41
-    LPAREN  shift, and go to state 43
-
-    expression           go to state 71
-    var                  go to state 49
-    simple-expression    go to state 50
-    additive-expression  go to state 51
-    term                 go to state 52
-    factor               go to state 53
+    SEMICOLON  shift, and go to state 68
 
 
 State 55
 
-   50 factor: LPAREN expression . RPAREN
+   39 expression: var . ASSIGN expression
+   60 factor: var .
 
-    RPAREN  shift, and go to state 72
+    ASSIGN  shift, and go to state 69
+
+    $default  reduce using rule 60 (factor)
 
 
 State 56
 
-   28 expression-stmt: expression SEMICOLON .
+   40 expression: simple-expression .
 
-    $default  reduce using rule 28 (expression-stmt)
+    $default  reduce using rule 40 (expression)
 
 
 State 57
 
-   30 expression: var ASSIGN . expression
+   43 simple-expression: additive-expression . relop additive-expression
+   44                  | additive-expression .
+   51 additive-expression: additive-expression . addop term
 
-    ID      shift, and go to state 40
-    NUM     shift, and go to state 41
-    LPAREN  shift, and go to state 43
+    PLUS   shift, and go to state 70
+    MINUS  shift, and go to state 71
+    LT     shift, and go to state 72
+    LEQ    shift, and go to state 73
+    GT     shift, and go to state 74
+    GEQ    shift, and go to state 75
+    EQ     shift, and go to state 76
+    NEQ    shift, and go to state 77
 
-    expression           go to state 73
-    var                  go to state 49
-    simple-expression    go to state 50
-    additive-expression  go to state 51
-    term                 go to state 52
-    factor               go to state 53
+    $default  reduce using rule 44 (simple-expression)
+
+    relop  go to state 78
+    addop  go to state 79
 
 
 State 58
 
-   44 addop: PLUS .
+   52 additive-expression: term .
+   55 term: term . mulop factor
 
-    $default  reduce using rule 44 (addop)
+    TIMES   shift, and go to state 80
+    DIVIDE  shift, and go to state 81
+
+    $default  reduce using rule 52 (additive-expression)
+
+    mulop  go to state 82
 
 
 State 59
 
-   45 addop: MINUS .
+   56 term: factor .
 
-    $default  reduce using rule 45 (addop)
+    $default  reduce using rule 56 (term)
 
 
 State 60
 
-   37 relop: LT .
+   61 factor: call .
 
-    $default  reduce using rule 37 (relop)
+    $default  reduce using rule 61 (factor)
 
 
 State 61
 
-   36 relop: LEQ .
+   42 var: ID LBRACKET . expression RBRACKET
 
-    $default  reduce using rule 36 (relop)
+    ID      shift, and go to state 40
+    NUM     shift, and go to state 41
+    LPAREN  shift, and go to state 46
+
+    expression           go to state 83
+    var                  go to state 55
+    simple-expression    go to state 56
+    additive-expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
 
 
 State 62
 
-   38 relop: GT .
+   64 call: ID $@5 . LPAREN args RPAREN
 
-    $default  reduce using rule 38 (relop)
+    LPAREN  shift, and go to state 84
 
 
 State 63
 
-   39 relop: GEQ .
+   33 selection-stmt: IF LPAREN . expression RPAREN statement else-stmt
 
-    $default  reduce using rule 39 (relop)
+    ID      shift, and go to state 40
+    NUM     shift, and go to state 41
+    LPAREN  shift, and go to state 46
+
+    expression           go to state 85
+    var                  go to state 55
+    simple-expression    go to state 56
+    additive-expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
 
 
 State 64
 
-   40 relop: EQ .
+   37 return-stmt: RETURN SEMICOLON .
 
-    $default  reduce using rule 40 (relop)
+    $default  reduce using rule 37 (return-stmt)
 
 
 State 65
 
-   41 relop: NEQ .
+   38 return-stmt: RETURN expression . SEMICOLON
 
-    $default  reduce using rule 41 (relop)
+    SEMICOLON  shift, and go to state 86
 
 
 State 66
 
-   34 simple-expression: additive-expression relop . additive-expression
+   36 iteration-stmt: WHILE LPAREN . expression RPAREN statement
 
+    ID      shift, and go to state 40
     NUM     shift, and go to state 41
-    LPAREN  shift, and go to state 43
+    LPAREN  shift, and go to state 46
 
-    additive-expression  go to state 74
-    term                 go to state 52
-    factor               go to state 53
+    expression           go to state 87
+    var                  go to state 55
+    simple-expression    go to state 56
+    additive-expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
 
 
 State 67
 
-   42 additive-expression: additive-expression addop . term
+   59 factor: LPAREN expression . RPAREN
 
-    NUM     shift, and go to state 41
-    LPAREN  shift, and go to state 43
-
-    term    go to state 75
-    factor  go to state 53
+    RPAREN  shift, and go to state 88
 
 
 State 68
 
-   48 mulop: TIMES .
+   31 expression-stmt: expression SEMICOLON .
 
-    $default  reduce using rule 48 (mulop)
+    $default  reduce using rule 31 (expression-stmt)
 
 
 State 69
 
-   49 mulop: DIVIDE .
+   39 expression: var ASSIGN . expression
 
-    $default  reduce using rule 49 (mulop)
+    ID      shift, and go to state 40
+    NUM     shift, and go to state 41
+    LPAREN  shift, and go to state 46
+
+    expression           go to state 89
+    var                  go to state 55
+    simple-expression    go to state 56
+    additive-expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
 
 
 State 70
 
-   46 term: term mulop . factor
+   53 addop: PLUS .
 
-    NUM     shift, and go to state 41
-    LPAREN  shift, and go to state 43
-
-    factor  go to state 76
+    $default  reduce using rule 53 (addop)
 
 
 State 71
 
-   33 var: ID LBRACKET expression . RBRACKET
+   54 addop: MINUS .
 
-    RBRACKET  shift, and go to state 77
+    $default  reduce using rule 54 (addop)
 
 
 State 72
 
-   50 factor: LPAREN expression RPAREN .
+   46 relop: LT .
 
-    $default  reduce using rule 50 (factor)
+    $default  reduce using rule 46 (relop)
 
 
 State 73
 
-   30 expression: var ASSIGN expression .
+   45 relop: LEQ .
 
-    $default  reduce using rule 30 (expression)
+    $default  reduce using rule 45 (relop)
 
 
 State 74
 
-   34 simple-expression: additive-expression relop additive-expression .
-   42 additive-expression: additive-expression . addop term
+   47 relop: GT .
 
-    PLUS   shift, and go to state 58
-    MINUS  shift, and go to state 59
-
-    $default  reduce using rule 34 (simple-expression)
-
-    addop  go to state 67
+    $default  reduce using rule 47 (relop)
 
 
 State 75
 
-   42 additive-expression: additive-expression addop term .
-   46 term: term . mulop factor
+   48 relop: GEQ .
 
-    TIMES   shift, and go to state 68
-    DIVIDE  shift, and go to state 69
-
-    $default  reduce using rule 42 (additive-expression)
-
-    mulop  go to state 70
+    $default  reduce using rule 48 (relop)
 
 
 State 76
 
-   46 term: term mulop factor .
+   49 relop: EQ .
 
-    $default  reduce using rule 46 (term)
+    $default  reduce using rule 49 (relop)
 
 
 State 77
 
-   33 var: ID LBRACKET expression RBRACKET .
+   50 relop: NEQ .
 
-    $default  reduce using rule 33 (var)
+    $default  reduce using rule 50 (relop)
+
+
+State 78
+
+   43 simple-expression: additive-expression relop . additive-expression
+
+    ID      shift, and go to state 40
+    NUM     shift, and go to state 41
+    LPAREN  shift, and go to state 46
+
+    var                  go to state 90
+    additive-expression  go to state 91
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+
+
+State 79
+
+   51 additive-expression: additive-expression addop . term
+
+    ID      shift, and go to state 40
+    NUM     shift, and go to state 41
+    LPAREN  shift, and go to state 46
+
+    var     go to state 90
+    term    go to state 92
+    factor  go to state 59
+    call    go to state 60
+
+
+State 80
+
+   57 mulop: TIMES .
+
+    $default  reduce using rule 57 (mulop)
+
+
+State 81
+
+   58 mulop: DIVIDE .
+
+    $default  reduce using rule 58 (mulop)
+
+
+State 82
+
+   55 term: term mulop . factor
+
+    ID      shift, and go to state 40
+    NUM     shift, and go to state 41
+    LPAREN  shift, and go to state 46
+
+    var     go to state 90
+    factor  go to state 93
+    call    go to state 60
+
+
+State 83
+
+   42 var: ID LBRACKET expression . RBRACKET
+
+    RBRACKET  shift, and go to state 94
+
+
+State 84
+
+   64 call: ID $@5 LPAREN . args RPAREN
+
+    ID      shift, and go to state 40
+    NUM     shift, and go to state 41
+    LPAREN  shift, and go to state 46
+
+    $default  reduce using rule 66 (args)
+
+    expression           go to state 95
+    var                  go to state 55
+    simple-expression    go to state 56
+    additive-expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+    args                 go to state 96
+    arg-list             go to state 97
+
+
+State 85
+
+   33 selection-stmt: IF LPAREN expression . RPAREN statement else-stmt
+
+    RPAREN  shift, and go to state 98
+
+
+State 86
+
+   38 return-stmt: RETURN expression SEMICOLON .
+
+    $default  reduce using rule 38 (return-stmt)
+
+
+State 87
+
+   36 iteration-stmt: WHILE LPAREN expression . RPAREN statement
+
+    RPAREN  shift, and go to state 99
+
+
+State 88
+
+   59 factor: LPAREN expression RPAREN .
+
+    $default  reduce using rule 59 (factor)
+
+
+State 89
+
+   39 expression: var ASSIGN expression .
+
+    $default  reduce using rule 39 (expression)
+
+
+State 90
+
+   60 factor: var .
+
+    $default  reduce using rule 60 (factor)
+
+
+State 91
+
+   43 simple-expression: additive-expression relop additive-expression .
+   51 additive-expression: additive-expression . addop term
+
+    PLUS   shift, and go to state 70
+    MINUS  shift, and go to state 71
+
+    $default  reduce using rule 43 (simple-expression)
+
+    addop  go to state 79
+
+
+State 92
+
+   51 additive-expression: additive-expression addop term .
+   55 term: term . mulop factor
+
+    TIMES   shift, and go to state 80
+    DIVIDE  shift, and go to state 81
+
+    $default  reduce using rule 51 (additive-expression)
+
+    mulop  go to state 82
+
+
+State 93
+
+   55 term: term mulop factor .
+
+    $default  reduce using rule 55 (term)
+
+
+State 94
+
+   42 var: ID LBRACKET expression RBRACKET .
+
+    $default  reduce using rule 42 (var)
+
+
+State 95
+
+   68 arg-list: expression .
+
+    $default  reduce using rule 68 (arg-list)
+
+
+State 96
+
+   64 call: ID $@5 LPAREN args . RPAREN
+
+    RPAREN  shift, and go to state 100
+
+
+State 97
+
+   65 args: arg-list .
+   67 arg-list: arg-list . COMMA expression
+
+    COMMA  shift, and go to state 101
+
+    $default  reduce using rule 65 (args)
+
+
+State 98
+
+   33 selection-stmt: IF LPAREN expression RPAREN . statement else-stmt
+
+    ID         shift, and go to state 40
+    NUM        shift, and go to state 41
+    IF         shift, and go to state 42
+    RETURN     shift, and go to state 43
+    WHILE      shift, and go to state 44
+    SEMICOLON  shift, and go to state 45
+    LPAREN     shift, and go to state 46
+    LBRACE     shift, and go to state 30
+
+    compound-stmt        go to state 48
+    statement            go to state 102
+    expression-stmt      go to state 50
+    selection-stmt       go to state 51
+    iteration-stmt       go to state 52
+    return-stmt          go to state 53
+    expression           go to state 54
+    var                  go to state 55
+    simple-expression    go to state 56
+    additive-expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+
+
+State 99
+
+   36 iteration-stmt: WHILE LPAREN expression RPAREN . statement
+
+    ID         shift, and go to state 40
+    NUM        shift, and go to state 41
+    IF         shift, and go to state 42
+    RETURN     shift, and go to state 43
+    WHILE      shift, and go to state 44
+    SEMICOLON  shift, and go to state 45
+    LPAREN     shift, and go to state 46
+    LBRACE     shift, and go to state 30
+
+    compound-stmt        go to state 48
+    statement            go to state 103
+    expression-stmt      go to state 50
+    selection-stmt       go to state 51
+    iteration-stmt       go to state 52
+    return-stmt          go to state 53
+    expression           go to state 54
+    var                  go to state 55
+    simple-expression    go to state 56
+    additive-expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+
+
+State 100
+
+   64 call: ID $@5 LPAREN args RPAREN .
+
+    $default  reduce using rule 64 (call)
+
+
+State 101
+
+   67 arg-list: arg-list COMMA . expression
+
+    ID      shift, and go to state 40
+    NUM     shift, and go to state 41
+    LPAREN  shift, and go to state 46
+
+    expression           go to state 104
+    var                  go to state 55
+    simple-expression    go to state 56
+    additive-expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+
+
+State 102
+
+   33 selection-stmt: IF LPAREN expression RPAREN statement . else-stmt
+
+    ELSE  shift, and go to state 105
+
+    ELSE      [reduce using rule 35 (else-stmt)]
+    $default  reduce using rule 35 (else-stmt)
+
+    else-stmt  go to state 106
+
+
+State 103
+
+   36 iteration-stmt: WHILE LPAREN expression RPAREN statement .
+
+    $default  reduce using rule 36 (iteration-stmt)
+
+
+State 104
+
+   67 arg-list: arg-list COMMA expression .
+
+    $default  reduce using rule 67 (arg-list)
+
+
+State 105
+
+   34 else-stmt: ELSE . statement
+
+    ID         shift, and go to state 40
+    NUM        shift, and go to state 41
+    IF         shift, and go to state 42
+    RETURN     shift, and go to state 43
+    WHILE      shift, and go to state 44
+    SEMICOLON  shift, and go to state 45
+    LPAREN     shift, and go to state 46
+    LBRACE     shift, and go to state 30
+
+    compound-stmt        go to state 48
+    statement            go to state 107
+    expression-stmt      go to state 50
+    selection-stmt       go to state 51
+    iteration-stmt       go to state 52
+    return-stmt          go to state 53
+    expression           go to state 54
+    var                  go to state 55
+    simple-expression    go to state 56
+    additive-expression  go to state 57
+    term                 go to state 58
+    factor               go to state 59
+    call                 go to state 60
+
+
+State 106
+
+   33 selection-stmt: IF LPAREN expression RPAREN statement else-stmt .
+
+    $default  reduce using rule 33 (selection-stmt)
+
+
+State 107
+
+   34 else-stmt: ELSE statement .
+
+    $default  reduce using rule 34 (else-stmt)

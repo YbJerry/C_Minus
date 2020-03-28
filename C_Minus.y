@@ -11,7 +11,9 @@ extern FILE *yyin;
 extern char tokenString[];
 
 static TreeNode *savedTree;
-static char *savedName;
+static char *funSavedName;
+static char *varSavedName;
+static char *callSavedName;
 %}
 
 %token ID NUM
@@ -67,19 +69,19 @@ var-declaration {$$ = $1;}
 
 var-declaration:
 type-specifier ID {
-    savedName = copyString(tokenString);
+    varSavedName = copyString(tokenString);
 }
 SEMICOLON {
     $$ = newDecNode(VarK);
-    $$->attr.name = savedName;
+    $$->attr.name = varSavedName;
     $$->type = $1;
 }
 | type-specifier ID {
-    savedName = copyString(tokenString);
+    varSavedName = copyString(tokenString);
 }
 LBRACKET NUM RBRACKET SEMICOLON {
     $$ = newDecNode(VarK);
-    $$->attr.name = savedName;
+    $$->attr.name = varSavedName;
     $$->type = Array;
 }
 ;
@@ -91,11 +93,11 @@ INT     {$$ = Int;}
 
 fun-declaration:
 type-specifier ID {
-    savedName = copyString(tokenString);
+    funSavedName = copyString(tokenString);
 }
 LPAREN params RPAREN compound-stmt {
     $$ = newDecNode(FunK);
-    $$->attr.name = savedName;
+    $$->attr.name = funSavedName;
     $$->child[0] = $5;
     $$->child[1] = $7;
     $$->type = $1;
@@ -121,17 +123,13 @@ param-list COMMA param {
 
 param:
 type-specifier ID {
-    savedName = copyString(tokenString);
     $$ = newDecNode(VarK);
-    $$->attr.name = savedName;
+    $$->attr.name = copyString(tokenString);
     $$->type = $1;
 }
-| type-specifier ID{
-    savedName = copyString(tokenString);
-} 
-LBRACKET RBRACKET{
+| type-specifier ID LBRACKET RBRACKET{
     $$ = newDecNode(VarK);
-    $$->attr.name = savedName;
+    $$->attr.name = copyString(tokenString);
     $$->type = Array;
 }
 ;
@@ -223,7 +221,7 @@ RETURN SEMICOLON {
 }
 
 | RETURN expression SEMICOLON {
-    $$ = newStmNode(IfK);
+    $$ = newStmNode(ReturnK);
     $$->child[0] = $2;
 }
 ;
@@ -246,11 +244,14 @@ ID {
     $$->attr.name = copyString(tokenString);
     $$->type = Int;
 }
-| ID LBRACKET expression RBRACKET{
+| ID {
+    varSavedName = copyString(tokenString);
+}
+LBRACKET expression RBRACKET{
     $$ = newExpNode(IdK);
-    $$->attr.name = copyString(tokenString);
+    $$->attr.name = varSavedName;
     $$->type = Array;
-    $$->child[0] = $3;
+    $$->child[0] = $4;
 }
 ;
 
@@ -316,10 +317,10 @@ LPAREN expression RPAREN { $$ = $2; }
 
 call:
 ID {
-    savedName = copyString(tokenString);
+    callSavedName = copyString(tokenString);
 } LPAREN args RPAREN {
     $$ = newExpNode(CallK);
-    $$->attr.name = savedName;
+    $$->attr.name = callSavedName;
     $$->child[0] = $4;
 }
 ;

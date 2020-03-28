@@ -59,7 +59,7 @@ char * copyString(char *str){
     return strcpy(temp, str);
 }
 
-static int treeLevel = 0;
+static int treeLevel = -4;
 
 void printTree(TreeNode *tree){
     treeLevel += 4;
@@ -78,10 +78,10 @@ void printNode(TreeNode *node){
     if(node->nodeKind == DecK){
         switch(node->kind.dec){
             case VarK:
-                printf("var-declaration\n");
+                printf("var-dec: %s\n", node->attr.name);
                 break;
             case FunK:
-                printf("fun-declaration\n");
+                printf("fun-dec: %s\n", node->attr.name);
                 break;
             default:
                 printf("error\n");
@@ -93,13 +93,41 @@ void printNode(TreeNode *node){
                 printf("op: %s\n", tokenTrans(node->attr.op));
                 break;
             case IdK:
-                printf("id: %s\n", node->attr.name);
+                if(node->type == Array)
+                    printf("array: %s\n", node->attr.name);
+                else
+                    printf("id: %s\n", node->attr.name);
+                break;
+            case NumK:
+                printf("num: %d\n", node->attr.val);
+                break;
+            case CallK:
+                printf("call: %s\n", node->attr.name);
+                break;
+            default:
+                printf("error\n");
                 break;
         }
     }else if(node->nodeKind == StmK){
-
+        switch(node->kind.stm){
+            case IfK:
+                printf("if:\n");
+                break;
+            case WhileK:
+                printf("while:\n");
+                break;
+            case ReturnK:
+                printf("return:\n");
+                break;
+            case CompoundK:
+                printf("{}:\n");
+                break;
+            default:
+                printf("error\n");
+                break;
+        }
     }else if(node->nodeKind == ComK){
-
+        treeLevel -= 4;
     }else{
         printf("error\n");
     }
@@ -109,6 +137,18 @@ void printSpaces(){
     int i;
     for(i = 0; i < treeLevel; ++i){
         putchar(' ');
+    }
+}
+
+char * typeTrans(ExpType type){
+    switch (type)
+    {
+    case Int:
+        return "int";
+    case Void:
+        return "void";
+    case Array:
+        return "array";
     }
 }
 
@@ -152,5 +192,17 @@ char * tokenTrans(TokenType op){
 			return "{";
  		case RBRACE:
 			return "}";
+        // case IF:
+		// 	return "if";
+        // case ELSE:
+		// 	return "else";
+        // case INT:
+		// 	return "int";
+        // case RETURN:
+		// 	return "return";
+        // case VOID:
+		// 	return "void";
+        // case WHILE:
+        //     return "while";
     }
 }

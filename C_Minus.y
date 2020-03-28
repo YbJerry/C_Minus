@@ -33,10 +33,10 @@ static char *savedName;
 %type <tree> params param-list param
 %type <tree> compound-stmt local-declarations statement-list statement
 %type <tree> expression-stmt //selection-stmt iteration-stmt return-stmt
-%type <tree> expression var //simple-expression additive-expression
-// %type <tree> term factor call args arg-list
+%type <tree> expression var simple-expression additive-expression
+%type <tree> term factor call args arg-list
 %type <type> type-specifier 
-// %type <op> relop addop mulop
+%type <op> relop addop mulop
 %type <tree> empty
 
 %start program
@@ -105,7 +105,7 @@ LPAREN params RPAREN compound-stmt {
 
 params:
 param-list { $$ = $1; }
-| VOID {$$ = NULL;printf("NULL\n");}
+| VOID {$$ = NULL;}
 ;
 
 param-list:
@@ -215,69 +215,91 @@ var ASSIGN expression {
     $$->child[0] = $1;
     $$->child[1] = $3;
 }
-// | simple-expression {
-//     $$ = $1;
-// }
+| simple-expression {
+    $$ = $1;
+}
 ;
 
 var:
 ID { 
     $$ = newExpNode(IdK);
     $$->attr.name = copyString(tokenString);
-    $$->attr.type = Int;
+    $$->type = Int;
 }
 | ID LBRACKET expression RBRACKET{
     $$ = newExpNode(IdK);
     $$->attr.name = copyString(tokenString);
-    $$->attr.type = Array;
+    $$->type = Array;
     $$->index = $3;
 }
 ;
 
-// simple-expression:
-// additive-expression relop additive-expression
-// | additive-expression
-// ;
+simple-expression:
+additive-expression relop additive-expression{
+    $$ = newExpNode(OpK);
+    $$->attr.op = $2;
+    $$->child[0] = $1;
+    $$->child[1] = $3;
+}
+| additive-expression { $$ = $1; }
+;
 
-// relop:
-// LEQ
-// | LT
-// | GT
-// | GEQ
-// | EQ
-// | NEQ
-// ;
+relop:
+LEQ { $$ = LEQ; }
+| LT { $$ = LT; }
+| GT { $$ = GT; }
+| GEQ { $$ = GEQ; }
+| EQ { $$ = EQ; }
+| NEQ { $$ = NEQ; }
+;
 
-// additive-expression:
-// additive-expression addop term
-// | term
-// ;
+additive-expression:
+additive-expression addop term {
+    $$ = newExpNode(OpK);
+    $$->attr.op = $2;
+    $$->child[0] = $1;
+    $$->child[1] = $3;
+}
+| term { $$ = $1; }
+;
 
-// addop:
-// PLUS
-// | MINUS
-// ;
+addop:
+PLUS { $$ = PLUS; }
+| MINUS { $$ = MINUS; }
+;
 
-// term:
-// term mulop factor
-// | factor
-// ;
+term:
+term mulop factor {
+    $$ = newExpNode(OpK);
+    $$->attr.op = $2;
+    $$->child[0] = $1;
+    $$->child[1] = $3;
+}
+| factor { $$ = $1; }
+;
 
-// mulop:
-// MINUS
-// | DIVIDE
-// ;
+mulop:
+TIMES { $$ = TIMES; }
+| DIVIDE { $$ = DIVIDE; }
+;
 
-// factor:
-// LPAREN expression RPAREN
-// | var
-// | call
-// | NUM
-// ;
+factor:
+LPAREN expression RPAREN { $$ = $2; }
+// | var { $$ = $1; }
+// | call { $$ = $1; }
+| NUM {
+    char *temp = copyString(tokenString);
+    $$ = newExpNode(NumK);
+    $$->attr.val = atoi(temp);
+}
+;
 
-// call:
-// ID LPAREN args RPAREN
-// ;
+call:
+ID LPAREN args RPAREN{
+    $$ = newExpNode(CallK);
+    
+}
+;
 
 // args:
 // arg-list

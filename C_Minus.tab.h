@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 18 "C_Minus.y" /* yacc.c:1909  */
+#line 22 "C_Minus.y" /* yacc.c:1909  */
 
     #include "globals.h"
 
@@ -87,7 +87,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 22 "C_Minus.y" /* yacc.c:1909  */
+#line 26 "C_Minus.y" /* yacc.c:1909  */
 
     TreeNode * tree;
     ExpType type;

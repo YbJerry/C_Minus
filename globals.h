@@ -6,7 +6,7 @@
 typedef int TokenType;
 typedef enum {StmK, ExpK, DecK, ComK} NodeKind;
 typedef enum {IfK, WhileK, ReturnK, CompoundK} StmKind;
-typedef enum {OpK, IdK} ExpKind;
+typedef enum {OpK, IdK, NumK, CallK} ExpKind;
 typedef enum {VarK, FunK} DecKind;
 typedef enum {Int, Void, Array} ExpType;
 

@@ -1,14 +1,15 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
-#include "globals.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
 #ifndef YYTOKENTYPE
 #include "C_Minus.tab.h"
 #endif
+
+#include "globals.h"
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 TreeNode * newStmNode(StmKind kind);
 TreeNode * newExpNode(ExpKind kind);

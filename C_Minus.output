@@ -1,8 +1,9 @@
 Nonterminals useless in grammar
 
-   expression
-   var
    empty
+   arg-list
+   args
+   call
 
 
 Terminals unused in grammar
@@ -11,30 +12,12 @@ Terminals unused in grammar
    ELSE
    RETURN
    WHILE
-   PLUS
-   MINUS
-   TIMES
-   DIVIDE
-   LT
-   LEQ
-   GT
-   GEQ
-   EQ
-   NEQ
-   ASSIGN
    ERROR
 
 
 Rules useless in grammar
 
-   29 expression-stmt: expression SEMICOLON
-
-   30 expression: var ASSIGN expression
-
-   31 var: ID
-   32    | ID LBRACKET expression RBRACKET
-
-   33 empty: %empty
+   52 empty: %empty
 
 
 Grammar
@@ -87,38 +70,70 @@ Grammar
    26 statement: expression-stmt
    27          | compound-stmt
 
-   28 expression-stmt: SEMICOLON
+   28 expression-stmt: expression SEMICOLON
+   29                | SEMICOLON
+
+   30 expression: var ASSIGN expression
+   31           | simple-expression
+
+   32 var: ID
+   33    | ID LBRACKET expression RBRACKET
+
+   34 simple-expression: additive-expression relop additive-expression
+   35                  | additive-expression
+
+   36 relop: LEQ
+   37      | LT
+   38      | GT
+   39      | GEQ
+   40      | EQ
+   41      | NEQ
+
+   42 additive-expression: additive-expression addop term
+   43                    | term
+
+   44 addop: PLUS
+   45      | MINUS
+
+   46 term: term mulop factor
+   47     | factor
+
+   48 mulop: TIMES
+   49      | DIVIDE
+
+   50 factor: LPAREN expression RPAREN
+   51       | NUM
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
 error (256)
-ID (258) 7 9 13 18 20
-NUM (259) 9
+ID (258) 7 9 13 18 20 32 33
+NUM (259) 9 51
 IF (260)
 ELSE (261)
 INT (262) 10
 RETURN (263)
 VOID (264) 11 15
 WHILE (265)
-PLUS (266)
-MINUS (267)
-TIMES (268)
-DIVIDE (269)
-LT (270)
-LEQ (271)
-GT (272)
-GEQ (273)
-EQ (274)
-NEQ (275)
-ASSIGN (276)
-SEMICOLON (277) 7 9 28
+PLUS (266) 44
+MINUS (267) 45
+TIMES (268) 48
+DIVIDE (269) 49
+LT (270) 37
+LEQ (271) 36
+GT (272) 38
+GEQ (273) 39
+EQ (274) 40
+NEQ (275) 41
+ASSIGN (276) 30
+SEMICOLON (277) 7 9 28 29
 COMMA (278) 16
-LPAREN (279) 13
-RPAREN (280) 13
-LBRACKET (281) 9 20
-RBRACKET (282) 9 20
+LPAREN (279) 13 50
+RPAREN (280) 13 50
+LBRACKET (281) 9 20 33
+RBRACKET (282) 9 20 33
 LBRACE (283) 21
 RBRACE (284) 21
 ERROR (285)
@@ -163,7 +178,25 @@ statement-list (47)
 statement (48)
     on left: 26 27, on right: 24
 expression-stmt (49)
-    on left: 28, on right: 26
+    on left: 28 29, on right: 26
+expression (50)
+    on left: 30 31, on right: 28 30 33 50
+var (51)
+    on left: 32 33, on right: 30
+simple-expression (52)
+    on left: 34 35, on right: 31
+relop (53)
+    on left: 36 37 38 39 40 41, on right: 34
+additive-expression (54)
+    on left: 42 43, on right: 34 35 42
+addop (55)
+    on left: 44 45, on right: 42
+term (56)
+    on left: 46 47, on right: 42 43 46
+mulop (57)
+    on left: 48 49, on right: 46
+factor (58)
+    on left: 50 51, on right: 46 47
 
 
 State 0
@@ -497,13 +530,22 @@ State 38
    21 compound-stmt: LBRACE local-declarations statement-list . RBRACE
    24 statement-list: statement-list . statement
 
-    SEMICOLON  shift, and go to state 40
+    ID         shift, and go to state 40
+    NUM        shift, and go to state 41
+    SEMICOLON  shift, and go to state 42
+    LPAREN     shift, and go to state 43
     LBRACE     shift, and go to state 30
-    RBRACE     shift, and go to state 41
+    RBRACE     shift, and go to state 44
 
-    compound-stmt    go to state 42
-    statement        go to state 43
-    expression-stmt  go to state 44
+    compound-stmt        go to state 45
+    statement            go to state 46
+    expression-stmt      go to state 47
+    expression           go to state 48
+    var                  go to state 49
+    simple-expression    go to state 50
+    additive-expression  go to state 51
+    term                 go to state 52
+    factor               go to state 53
 
 
 State 39
@@ -520,34 +562,339 @@ State 39
 
 State 40
 
-   28 expression-stmt: SEMICOLON .
+   32 var: ID .
+   33    | ID . LBRACKET expression RBRACKET
 
-    $default  reduce using rule 28 (expression-stmt)
+    LBRACKET  shift, and go to state 54
+
+    $default  reduce using rule 32 (var)
 
 
 State 41
+
+   51 factor: NUM .
+
+    $default  reduce using rule 51 (factor)
+
+
+State 42
+
+   29 expression-stmt: SEMICOLON .
+
+    $default  reduce using rule 29 (expression-stmt)
+
+
+State 43
+
+   50 factor: LPAREN . expression RPAREN
+
+    ID      shift, and go to state 40
+    NUM     shift, and go to state 41
+    LPAREN  shift, and go to state 43
+
+    expression           go to state 55
+    var                  go to state 49
+    simple-expression    go to state 50
+    additive-expression  go to state 51
+    term                 go to state 52
+    factor               go to state 53
+
+
+State 44
 
    21 compound-stmt: LBRACE local-declarations statement-list RBRACE .
 
     $default  reduce using rule 21 (compound-stmt)
 
 
-State 42
+State 45
 
    27 statement: compound-stmt .
 
     $default  reduce using rule 27 (statement)
 
 
-State 43
+State 46
 
    24 statement-list: statement-list statement .
 
     $default  reduce using rule 24 (statement-list)
 
 
-State 44
+State 47
 
    26 statement: expression-stmt .
 
     $default  reduce using rule 26 (statement)
+
+
+State 48
+
+   28 expression-stmt: expression . SEMICOLON
+
+    SEMICOLON  shift, and go to state 56
+
+
+State 49
+
+   30 expression: var . ASSIGN expression
+
+    ASSIGN  shift, and go to state 57
+
+
+State 50
+
+   31 expression: simple-expression .
+
+    $default  reduce using rule 31 (expression)
+
+
+State 51
+
+   34 simple-expression: additive-expression . relop additive-expression
+   35                  | additive-expression .
+   42 additive-expression: additive-expression . addop term
+
+    PLUS   shift, and go to state 58
+    MINUS  shift, and go to state 59
+    LT     shift, and go to state 60
+    LEQ    shift, and go to state 61
+    GT     shift, and go to state 62
+    GEQ    shift, and go to state 63
+    EQ     shift, and go to state 64
+    NEQ    shift, and go to state 65
+
+    $default  reduce using rule 35 (simple-expression)
+
+    relop  go to state 66
+    addop  go to state 67
+
+
+State 52
+
+   43 additive-expression: term .
+   46 term: term . mulop factor
+
+    TIMES   shift, and go to state 68
+    DIVIDE  shift, and go to state 69
+
+    $default  reduce using rule 43 (additive-expression)
+
+    mulop  go to state 70
+
+
+State 53
+
+   47 term: factor .
+
+    $default  reduce using rule 47 (term)
+
+
+State 54
+
+   33 var: ID LBRACKET . expression RBRACKET
+
+    ID      shift, and go to state 40
+    NUM     shift, and go to state 41
+    LPAREN  shift, and go to state 43
+
+    expression           go to state 71
+    var                  go to state 49
+    simple-expression    go to state 50
+    additive-expression  go to state 51
+    term                 go to state 52
+    factor               go to state 53
+
+
+State 55
+
+   50 factor: LPAREN expression . RPAREN
+
+    RPAREN  shift, and go to state 72
+
+
+State 56
+
+   28 expression-stmt: expression SEMICOLON .
+
+    $default  reduce using rule 28 (expression-stmt)
+
+
+State 57
+
+   30 expression: var ASSIGN . expression
+
+    ID      shift, and go to state 40
+    NUM     shift, and go to state 41
+    LPAREN  shift, and go to state 43
+
+    expression           go to state 73
+    var                  go to state 49
+    simple-expression    go to state 50
+    additive-expression  go to state 51
+    term                 go to state 52
+    factor               go to state 53
+
+
+State 58
+
+   44 addop: PLUS .
+
+    $default  reduce using rule 44 (addop)
+
+
+State 59
+
+   45 addop: MINUS .
+
+    $default  reduce using rule 45 (addop)
+
+
+State 60
+
+   37 relop: LT .
+
+    $default  reduce using rule 37 (relop)
+
+
+State 61
+
+   36 relop: LEQ .
+
+    $default  reduce using rule 36 (relop)
+
+
+State 62
+
+   38 relop: GT .
+
+    $default  reduce using rule 38 (relop)
+
+
+State 63
+
+   39 relop: GEQ .
+
+    $default  reduce using rule 39 (relop)
+
+
+State 64
+
+   40 relop: EQ .
+
+    $default  reduce using rule 40 (relop)
+
+
+State 65
+
+   41 relop: NEQ .
+
+    $default  reduce using rule 41 (relop)
+
+
+State 66
+
+   34 simple-expression: additive-expression relop . additive-expression
+
+    NUM     shift, and go to state 41
+    LPAREN  shift, and go to state 43
+
+    additive-expression  go to state 74
+    term                 go to state 52
+    factor               go to state 53
+
+
+State 67
+
+   42 additive-expression: additive-expression addop . term
+
+    NUM     shift, and go to state 41
+    LPAREN  shift, and go to state 43
+
+    term    go to state 75
+    factor  go to state 53
+
+
+State 68
+
+   48 mulop: TIMES .
+
+    $default  reduce using rule 48 (mulop)
+
+
+State 69
+
+   49 mulop: DIVIDE .
+
+    $default  reduce using rule 49 (mulop)
+
+
+State 70
+
+   46 term: term mulop . factor
+
+    NUM     shift, and go to state 41
+    LPAREN  shift, and go to state 43
+
+    factor  go to state 76
+
+
+State 71
+
+   33 var: ID LBRACKET expression . RBRACKET
+
+    RBRACKET  shift, and go to state 77
+
+
+State 72
+
+   50 factor: LPAREN expression RPAREN .
+
+    $default  reduce using rule 50 (factor)
+
+
+State 73
+
+   30 expression: var ASSIGN expression .
+
+    $default  reduce using rule 30 (expression)
+
+
+State 74
+
+   34 simple-expression: additive-expression relop additive-expression .
+   42 additive-expression: additive-expression . addop term
+
+    PLUS   shift, and go to state 58
+    MINUS  shift, and go to state 59
+
+    $default  reduce using rule 34 (simple-expression)
+
+    addop  go to state 67
+
+
+State 75
+
+   42 additive-expression: additive-expression addop term .
+   46 term: term . mulop factor
+
+    TIMES   shift, and go to state 68
+    DIVIDE  shift, and go to state 69
+
+    $default  reduce using rule 42 (additive-expression)
+
+    mulop  go to state 70
+
+
+State 76
+
+   46 term: term mulop factor .
+
+    $default  reduce using rule 46 (term)
+
+
+State 77
+
+   33 var: ID LBRACKET expression RBRACKET .
+
+    $default  reduce using rule 33 (var)

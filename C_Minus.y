@@ -10,7 +10,7 @@
 extern FILE *yyin;
 extern char tokenString[];
 
-static TreeNode *savedTree;
+TreeNode *savedTree;
 static char *funSavedName;
 static char *varSavedName;
 static char *callSavedName;
@@ -348,17 +348,4 @@ arg-list COMMA expression {
 int yyerror(char *msg)
 {
     printf("Error: %s \n", msg);
-}
-
-int main(int argc, char **argv) {
-    if(argc > 1){
-        yyin = fopen(argv[1], "r");
-    }
-    else{
-        yyin = stdin;
-    }
-    yyparse();
-    fclose(yyin);
-    printTree(savedTree);
-    return 0;
 }

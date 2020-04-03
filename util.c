@@ -206,3 +206,15 @@ char * tokenTrans(TokenType op){
         //     return "while";
     }
 }
+
+void printSymbolTable(SymbolTable *sTable){
+    int i;
+    for(i = 0; i < HASHNUM; ++i){
+        SymbolItem *item = sTable->bucket[i];
+        while(item){
+            printf("%10s\n", item->name);
+            item = item->next;
+        }
+    }
+    printf("\n");
+}

@@ -1,5 +1,5 @@
-main:	lex.yy.c C_Minus.tab.c util.c
-	gcc -g lex.yy.c C_Minus.tab.c util.c -o main
+main:	lex.yy.c C_Minus.tab.c util.c symtab.c analyze.c main.c
+	gcc -g lex.yy.c C_Minus.tab.c symtab.c analyze.c util.c main.c -o main
 
 C_Minus.tab.h: C_Minus.tab.c
 	echo "C_Minus.tab.h was created at the same time as C_Minus.tab.c"

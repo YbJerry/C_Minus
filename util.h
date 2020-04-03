@@ -6,6 +6,8 @@
 #endif
 
 #include "globals.h"
+#include "symtab.h"
+#include "analyze.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,5 +23,6 @@ char * copyString(char *str);
 void printTree(TreeNode *tree);
 void printNode(TreeNode *node);
 void printSpaces();
+void printSymbolTable(SymbolTable *sTable);
 
 #endif

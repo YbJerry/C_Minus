@@ -5,7 +5,7 @@ SymbolTable *symbolTables = NULL;
 int hash(char *name){
     int h = 0;
     while(*name){
-        h = (h << SHIFT + (*(name++))) % HASHNUM;
+        h = ((h << SHIFT) + (*(name++))) % HASHNUM;
     }
     return h;
 }

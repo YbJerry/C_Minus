@@ -17,6 +17,12 @@ int main(int argc, char **argv) {
     else{
         yyin = stdin;
     }
+
+    double test = 0.1;
+    if(test){
+        printf("test");
+    }
+
     newSymbolTable();
     yyparse();
     fclose(yyin);

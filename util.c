@@ -208,13 +208,36 @@ char * tokenTrans(TokenType op){
 }
 
 void printSymbolTable(SymbolTable *sTable){
-    int i;
-    for(i = 0; i < HASHNUM; ++i){
-        SymbolItem *item = sTable->bucket[i];
-        while(item){
-            printf("%10s\n", item->name);
-            item = item->next;
+    
+    if(sTable){
+        if(sTable->name){
+            printf("fun: %s\n", sTable->name);
+            printf("res: %s\n", (sTable->resType == Int)?"Int":"Void");
+            printf("args: ");
+            ArgsLink *l = sTable->argsType;
+            while(l){
+                if(l->type == Int)
+                    printf("%s  ", "int");
+                else if(l->type == Void)
+                    printf("%s  ", "void");
+                else if(l->type == Array)
+                    printf("%s  ", "array");
+                l = l->next;
+            }
+            putchar('\n');
+        }else
+        {
+            printf("non-name:\n");
         }
+        
+        int i;
+        for(i = 0; i < HASHNUM; ++i){
+            SymbolItem *item = sTable->bucket[i];
+            while(item){
+                printf("%10s\n", item->name);
+                item = item->next;
+            }
+        }
+        printf("\n");
     }
-    printf("\n");
 }

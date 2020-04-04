@@ -10,11 +10,32 @@ int hash(char *name){
     return h;
 }
 
-void newSymbolTable(){
+void newSymbolTable(TreeNode *node){
     SymbolTable *t = (SymbolTable *)malloc(sizeof(SymbolTable));
     memset(t, 0, sizeof(SymbolTable));
     t->next = symbolTables;
     symbolTables = t;
+
+    if(!node)
+        return;
+
+    char *name = node->attr.name;
+    if(name){
+        t->name = (char *)malloc(sizeof(name));
+        strcpy(t->name, name);
+    }
+    t->resType = node->type;
+
+    TreeNode *p = node->child[0];
+    ArgsLink *arg = NULL;
+    while(p){
+        ArgsLink *newArg = (ArgsLink *) malloc(sizeof(ArgsLink));
+        newArg->type = p->type;
+        newArg->next = arg;
+        arg = newArg;
+        p = p->sibling;
+    }
+    t->argsType = arg;
 }
 
 void delSymbolTable(){
@@ -23,7 +44,11 @@ void delSymbolTable(){
     free(t);
 }
 
-void insertSymbol(char *name){
+void insertSymbol(TreeNode *node){
+    if(!node){
+        return;
+    }
+    char *name = node->attr.name;
     if(!searchSymbolNow(name, symbolTables)){
         int h = hash(name);
         SymbolItem *t = (SymbolItem *)malloc(sizeof(SymbolItem));
@@ -54,4 +79,15 @@ int searchSymbolNow(char *name, SymbolTable *sTable){
         item = item->next;
     }
     return 0;
+}
+
+char *searchRegionName(){
+    SymbolTable *t = symbolTables;
+    while(t){
+        if(t->name){ 
+            return t->name;
+        }
+        t = t->next;
+    }
+    return NULL;
 }

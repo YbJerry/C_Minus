@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "globals.h"
 
 #define HASHNUM 211
 #define SHIFT 4
@@ -11,6 +12,7 @@
 typedef struct symbolTable SymbolTable;
 typedef struct symbolItem SymbolItem;
 typedef struct lineLink LineLink;
+typedef struct argsLink ArgsLink;
 
 extern SymbolTable *symbolTables;
 
@@ -21,20 +23,30 @@ struct lineLink{
 
 struct symbolItem{
     char *name;
+    ExpType type;
     LineLink lines;
     SymbolItem *next;
 };
 
+struct argsLink{
+    ExpType type;
+    struct argsLink *next;
+};
+
 struct symbolTable{
+    char *name;
+    ExpType resType;
+    ArgsLink *argsType;
     SymbolTable *next;
     SymbolItem *bucket[HASHNUM];
 };
 
 int hash(char *name);
-void newSymbolTable();
+void newSymbolTable(TreeNode *node);
 void delSymbolTable();
-void insertSymbol(char *name);
+void insertSymbol(TreeNode *node);
 int searchSymbolAll(char *name);
 int searchSymbolNow(char *name, SymbolTable *sTable);
+char *searchRegionName();
 
 #endif

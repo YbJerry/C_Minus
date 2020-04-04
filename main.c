@@ -18,12 +18,7 @@ int main(int argc, char **argv) {
         yyin = stdin;
     }
 
-    double test = 0.1;
-    if(test){
-        printf("test");
-    }
-
-    newSymbolTable();
+    newSymbolTable(NULL);
     yyparse();
     fclose(yyin);
     // printTree(savedTree);

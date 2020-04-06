@@ -26,21 +26,33 @@ void newSymbolTable(TreeNode *node){
     }
     t->resType = node->type;
 
-    TreeNode *p = node->child[0];
-    ArgsLink *arg = NULL;
-    while(p){
-        ArgsLink *newArg = (ArgsLink *) malloc(sizeof(ArgsLink));
-        newArg->type = p->type;
-        newArg->next = arg;
-        arg = newArg;
-        p = p->sibling;
-    }
-    t->argsType = arg;
+    // TreeNode *p = node->child[0];
+    // if(p){
+    //     t->argsType = (ArgsLink *) malloc(sizeof(ArgsLink));
+    //     t->argsType->type = p->type;
+    //     t->argsType->next = NULL;
+    //     p = p->sibling;
+    //     ArgsLink *arg = t->argsType;
+
+    //     while(p){
+    //         arg->next = (ArgsLink *) malloc(sizeof(ArgsLink));
+    //         arg = arg->next;
+    //         arg->type = p->type;
+    //         arg->next = NULL;
+    //         p = p->sibling;
+    //     }
+    // }
 }
 
 void delSymbolTable(){
     SymbolTable *t = symbolTables;
     symbolTables = symbolTables->next;
+    ArgsLink *arg = t->argsType;
+    while(arg){
+        t->argsType = t->argsType->next;
+        free(arg);
+        arg = t->argsType;
+    }
     free(t);
 }
 
@@ -54,8 +66,30 @@ void insertSymbol(TreeNode *node){
         SymbolItem *t = (SymbolItem *)malloc(sizeof(SymbolItem));
         t->name = (char *)malloc(strlen(name) * sizeof(char));
         strcpy(t->name, name);
+        t->argsType = NULL;
+        t->kind = VarK;
         t->next = symbolTables->bucket[h];
         symbolTables->bucket[h] = t;
+
+        if(node->nodeKind == DecK && node->kind.dec == FunK){
+            t->kind = FunK;
+            TreeNode *p = node->child[0];
+            if(p){
+                t->argsType = (ArgsLink *) malloc(sizeof(ArgsLink));
+                t->argsType->type = p->type;
+                t->argsType->next = NULL;
+                p = p->sibling;
+                ArgsLink *arg = t->argsType;
+
+                while(p){
+                    arg->next = (ArgsLink *) malloc(sizeof(ArgsLink));
+                    arg = arg->next;
+                    arg->type = p->type;
+                    arg->next = NULL;
+                    p = p->sibling;
+                }
+            }
+        }
     }
 }
 
@@ -81,11 +115,22 @@ int searchSymbolNow(char *name, SymbolTable *sTable){
     return 0;
 }
 
-char *searchRegionName(){
+char *returnRegionName(){
     SymbolTable *t = symbolTables;
     while(t){
         if(t->name){ 
             return t->name;
+        }
+        t = t->next;
+    }
+    return NULL;
+}
+
+SymbolTable *searchRegionName(char *name){
+    SymbolTable *t = symbolTables;
+    while(t){
+        if(t->name && !strcmp(t->name, name)){ 
+            return t;
         }
         t = t->next;
     }

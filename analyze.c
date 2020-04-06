@@ -62,13 +62,31 @@ void typeCheck(TreeNode *tree){
                 case OpK:
                     break;
                 case IdK:
-                    tree->type = Void;
                     break;
                 case NumK:
                     break;
-                case CallK:
-
+                case CallK:{
+                    // SymbolTable *table = searchRegionName(tree->attr.name);
+                    // ArgsLink *arg = table->argsType;
+                    // TreeNode *t = tree->child[0];
+                    // tree->type = table->resType;
+                    // if(arg == NULL && t != NULL){
+                    //     typeError("函数调用参数过多");
+                    //     break;
+                    // }
+                    // while(arg){
+                    //     if(!t){
+                    //         typeError("函数调用参数过少");
+                    //         break;
+                    //     }else if(arg->type != t->type){
+                    //         typeError("函数参数不匹配");
+                    //         break;
+                    //     }
+                    //     arg = arg->next;
+                    //     t = t->sibling;
+                    // }
                     break;
+                }
                 default:
                     break;
                 }

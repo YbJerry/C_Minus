@@ -212,19 +212,19 @@ void printSymbolTable(SymbolTable *sTable){
     if(sTable){
         if(sTable->name){
             printf("fun: %s\n", sTable->name);
-            printf("res: %s\n", (sTable->resType == Int)?"Int":"Void");
-            printf("args: ");
-            ArgsLink *l = sTable->argsType;
-            while(l){
-                if(l->type == Int)
-                    printf("%s  ", "int");
-                else if(l->type == Void)
-                    printf("%s  ", "void");
-                else if(l->type == Array)
-                    printf("%s  ", "array");
-                l = l->next;
-            }
-            putchar('\n');
+            // printf("res: %s\n", (sTable->resType == Int)?"Int":"Void");
+            // printf("args: ");
+            // ArgsLink *l = sTable->argsType;
+            // while(l){
+            //     if(l->type == Int)
+            //         printf("%s  ", "int");
+            //     else if(l->type == Void)
+            //         printf("%s  ", "void");
+            //     else if(l->type == Array)
+            //         printf("%s  ", "array");
+            //     l = l->next;
+            // }
+            // putchar('\n');
         }else
         {
             printf("non-name:\n");
@@ -234,7 +234,10 @@ void printSymbolTable(SymbolTable *sTable){
         for(i = 0; i < HASHNUM; ++i){
             SymbolItem *item = sTable->bucket[i];
             while(item){
-                printf("%10s\n", item->name);
+                if(item->kind == FunK){
+                    printf("| %10s (function)\n", item->name);
+                }else
+                    printf("| %10s\n", item->name);
                 item = item->next;
             }
         }

@@ -23,7 +23,9 @@ struct lineLink{
 
 struct symbolItem{
     char *name;
+    DecKind kind;
     ExpType type;
+    ArgsLink *argsType;
     LineLink lines;
     SymbolItem *next;
 };
@@ -47,6 +49,7 @@ void delSymbolTable();
 void insertSymbol(TreeNode *node);
 int searchSymbolAll(char *name);
 int searchSymbolNow(char *name, SymbolTable *sTable);
-char *searchRegionName();
+char *returnRegionName();
+SymbolTable *searchRegionName(char *name);
 
 #endif

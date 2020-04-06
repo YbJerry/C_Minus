@@ -1,11 +1,21 @@
 %{
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include "C_Minus.tab.h"
+#include "globals.h"
+#include "util.h"
 
-#define MAX_TOKEN_LEN 50
+extern TokenStringStack *tokenStringStack;
 
-char tokenString[MAX_TOKEN_LEN+1];
+void tokenStringPush(char *token){
+    TokenStringStack *s = (TokenStringStack *)malloc(sizeof(TokenStringStack));
+    strcpy(s->tokenString, token);
+    s->next = tokenStringStack;
+    tokenStringStack = s;
+}
+
 %}
 
 digit       [0-9]
@@ -23,11 +33,11 @@ number      {digit}+
 "while"         {return WHILE;}
 
 {identifier}    {
-    strcpy(tokenString, yytext);
+    tokenStringPush(yytext);
     return ID;
 }
 {number}        {
-    strcpy(tokenString, yytext);
+    tokenStringPush(yytext);
     return NUM;
 }
 

@@ -60,31 +60,52 @@ void typeCheck(TreeNode *tree){
                 switch (tree->kind.exp)
                 {
                 case OpK:
+                    tree->type = Int;
                     break;
-                case IdK:
+                case IdK:{
+                    SymbolItem *calledArg = searchSymbolAll(tree->attr.name);
+                    if(!calledArg){
+                        typeError("变量未声明");
+                        break;
+                    }
+                    tree->type = calledArg->type;
                     break;
+                }
                 case NumK:
                     break;
                 case CallK:{
-                    // SymbolTable *table = searchRegionName(tree->attr.name);
-                    // ArgsLink *arg = table->argsType;
-                    // TreeNode *t = tree->child[0];
-                    // tree->type = table->resType;
+                    SymbolItem *item = searchSymbolAll(tree->attr.name);
+                    if(!item){
+                        typeError("该函数未声明");
+                        break;
+                    }
+                    if(item->kind != FunK){
+                        typeError("调用的不是函数");
+                        break;
+                    }
+                    ArgsLink *arg = item->argsType;
+                    TreeNode *t = tree->child[0];
+                    tree->type = item->type;
                     // if(arg == NULL && t != NULL){
                     //     typeError("函数调用参数过多");
                     //     break;
                     // }
-                    // while(arg){
-                    //     if(!t){
-                    //         typeError("函数调用参数过少");
-                    //         break;
-                    //     }else if(arg->type != t->type){
-                    //         typeError("函数参数不匹配");
-                    //         break;
-                    //     }
-                    //     arg = arg->next;
-                    //     t = t->sibling;
-                    // }
+                    while(arg){
+                        if(!t){
+                            typeError("函数调用参数过少");
+                            break;
+                        }
+                        if(arg->type != t->type){
+                            typeError("函数参数不匹配");
+                            break;
+                        }
+                        arg = arg->next;
+                        t = t->sibling;
+                    }
+                    if(t){
+                        typeError("函数参数过多");
+                        break;
+                    }
                     break;
                 }
                 default:

@@ -7,7 +7,7 @@ C_Minus.tab.h: C_Minus.tab.c
 C_Minus.tab.c: C_Minus.y
 	bison -dv C_Minus.y
 
-lex.yy.c: C_Minus.l
+lex.yy.c: C_Minus.l C_Minus.tab.h
 	flex C_Minus.l
 
 clean:

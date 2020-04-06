@@ -8,7 +8,20 @@
 #include "util.h"
 
 extern FILE *yyin;
-extern char tokenString[];
+
+TokenStringStack *tokenStringStack = NULL;
+
+char *tokenStringPop(){
+    if(tokenStringStack){
+        TokenStringStack *s = tokenStringStack;
+        tokenStringStack = tokenStringStack->next;
+        char *res = (char *)malloc(sizeof(s->tokenString));
+        strcpy(res, s->tokenString);
+        free(s);
+        return res;
+    }
+    return NULL;
+}
 
 TreeNode *savedTree;
 static char *funSavedName;
@@ -68,20 +81,14 @@ var-declaration {$$ = $1;}
 ;
 
 var-declaration:
-type-specifier ID {
-    varSavedName = copyString(tokenString);
-}
-SEMICOLON {
+type-specifier ID SEMICOLON {
     $$ = newDecNode(VarK);
-    $$->attr.name = varSavedName;
+    $$->attr.name = copyString(tokenStringPop());
     $$->type = $1;
 }
-| type-specifier ID {
-    varSavedName = copyString(tokenString);
-}
-LBRACKET NUM RBRACKET SEMICOLON {
+| type-specifier ID LBRACKET NUM RBRACKET SEMICOLON {
     $$ = newDecNode(VarK);
-    $$->attr.name = varSavedName;
+    $$->attr.name = copyString(tokenStringPop());
     $$->type = Array;
 }
 ;
@@ -92,14 +99,11 @@ INT     {$$ = Int;}
 ;
 
 fun-declaration:
-type-specifier ID {
-    funSavedName = copyString(tokenString);
-}
-LPAREN params RPAREN compound-stmt {
+type-specifier ID LPAREN params RPAREN compound-stmt {
     $$ = newDecNode(FunK);
-    $$->attr.name = funSavedName;
-    $$->child[0] = $5;
-    $$->child[1] = $7;
+    $$->attr.name = copyString(tokenStringPop());
+    $$->child[0] = $4;
+    $$->child[1] = $6;
     $$->type = $1;
 }
 ;
@@ -124,12 +128,12 @@ param-list COMMA param {
 param:
 type-specifier ID {
     $$ = newDecNode(VarK);
-    $$->attr.name = copyString(tokenString);
+    $$->attr.name = copyString(tokenStringPop());
     $$->type = $1;
 }
 | type-specifier ID LBRACKET RBRACKET{
     $$ = newDecNode(VarK);
-    $$->attr.name = copyString(tokenString);
+    $$->attr.name = copyString(tokenStringPop());
     $$->type = Array;
 }
 ;
@@ -241,17 +245,14 @@ var ASSIGN expression {
 var:
 ID { 
     $$ = newExpNode(IdK);
-    $$->attr.name = copyString(tokenString);
+    $$->attr.name = copyString(tokenStringPop());
     $$->type = Int;
 }
-| ID {
-    varSavedName = copyString(tokenString);
-}
-LBRACKET expression RBRACKET{
+| ID LBRACKET expression RBRACKET{
     $$ = newExpNode(IdK);
-    $$->attr.name = varSavedName;
+    $$->attr.name = copyString(tokenStringPop());
     $$->type = Array;
-    $$->child[0] = $4;
+    $$->child[0] = $3;
 }
 ;
 
@@ -309,19 +310,17 @@ LPAREN expression RPAREN { $$ = $2; }
 | var { $$ = $1; }
 | call { $$ = $1; }
 | NUM {
-    char *temp = copyString(tokenString);
+    char *temp = copyString(tokenStringPop());
     $$ = newExpNode(NumK);
     $$->attr.val = atoi(temp);
 }
 ;
 
 call:
-ID {
-    callSavedName = copyString(tokenString);
-} LPAREN args RPAREN {
+ID LPAREN args RPAREN {
     $$ = newExpNode(CallK);
-    $$->attr.name = callSavedName;
-    $$->child[0] = $4;
+    $$->attr.name = copyString(tokenStringPop());
+    $$->child[0] = $3;
 }
 ;
 

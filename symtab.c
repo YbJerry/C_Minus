@@ -68,6 +68,7 @@ void insertSymbol(TreeNode *node){
         strcpy(t->name, name);
         t->argsType = NULL;
         t->kind = VarK;
+        t->type = node->type;
         t->next = symbolTables->bucket[h];
         symbolTables->bucket[h] = t;
 
@@ -94,25 +95,28 @@ void insertSymbol(TreeNode *node){
 }
 
 // 搜索全部作用域中的某符号
-int searchSymbolAll(char *name){
+SymbolItem * searchSymbolAll(char *name){
     SymbolTable *t = symbolTables;
+    SymbolItem *res = NULL;
     while(t){
-        searchSymbolNow(name, t);
+        if(res = searchSymbolNow(name, t))
+            return res;
+        t = t->next;
     }
-    return 0;
+    return NULL;
 }
 
 // 搜索指定作用域中的某符号
-int searchSymbolNow(char *name, SymbolTable *sTable){
+SymbolItem * searchSymbolNow(char *name, SymbolTable *sTable){
     int h = hash(name);
     SymbolItem *item = sTable->bucket[h];
     while(item){
         if(!strcmp(name, item->name)){
-            return 1;
+            return item;
         }
         item = item->next;
     }
-    return 0;
+    return NULL;
 }
 
 char *returnRegionName(){

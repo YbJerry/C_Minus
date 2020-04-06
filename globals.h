@@ -2,6 +2,7 @@
 #define _GLOBALS_H_
 
 #define MAXCHILDNUM 3
+#define MAX_TOKEN_LEN 50
 
 typedef int TokenType;
 typedef enum {StmK, ExpK, DecK, ComK} NodeKind;
@@ -23,6 +24,12 @@ struct treeNode{
         void *address;
     }attr;
     ExpType type;
+};
+
+typedef struct _TokenStringStack TokenStringStack;
+struct _TokenStringStack{
+    char tokenString[MAX_TOKEN_LEN+1];
+    TokenStringStack *next;
 };
 
 #endif

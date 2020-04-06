@@ -47,8 +47,8 @@ int hash(char *name);
 void newSymbolTable(TreeNode *node);
 void delSymbolTable();
 void insertSymbol(TreeNode *node);
-int searchSymbolAll(char *name);
-int searchSymbolNow(char *name, SymbolTable *sTable);
+SymbolItem *searchSymbolAll(char *name);
+SymbolItem *searchSymbolNow(char *name, SymbolTable *sTable);
 char *returnRegionName();
 SymbolTable *searchRegionName(char *name);
 

@@ -479,14 +479,24 @@ char *yytext;
 #line 1 "C_Minus.l"
 #line 2 "C_Minus.l"
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include "C_Minus.tab.h"
+#include "globals.h"
+#include "util.h"
 
-#define MAX_TOKEN_LEN 50
+extern TokenStringStack *tokenStringStack;
 
-char tokenString[MAX_TOKEN_LEN+1];
-#line 489 "lex.yy.c"
-#line 490 "lex.yy.c"
+void tokenStringPush(char *token){
+    TokenStringStack *s = (TokenStringStack *)malloc(sizeof(TokenStringStack));
+    strcpy(s->tokenString, token);
+    s->next = tokenStringStack;
+    tokenStringStack = s;
+}
+
+#line 499 "lex.yy.c"
+#line 500 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -703,10 +713,10 @@ YY_DECL
 		}
 
 	{
-#line 16 "C_Minus.l"
+#line 26 "C_Minus.l"
 
 
-#line 710 "lex.yy.c"
+#line 720 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -765,148 +775,148 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 18 "C_Minus.l"
+#line 28 "C_Minus.l"
 {return IF;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 19 "C_Minus.l"
+#line 29 "C_Minus.l"
 {return ELSE;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 20 "C_Minus.l"
+#line 30 "C_Minus.l"
 {return INT;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 21 "C_Minus.l"
+#line 31 "C_Minus.l"
 {return RETURN;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 22 "C_Minus.l"
+#line 32 "C_Minus.l"
 {return VOID;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 23 "C_Minus.l"
+#line 33 "C_Minus.l"
 {return WHILE;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 25 "C_Minus.l"
+#line 35 "C_Minus.l"
 {
-    strcpy(tokenString, yytext);
+    tokenStringPush(yytext);
     return ID;
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 29 "C_Minus.l"
+#line 39 "C_Minus.l"
 {
-    strcpy(tokenString, yytext);
+    tokenStringPush(yytext);
     return NUM;
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 34 "C_Minus.l"
+#line 44 "C_Minus.l"
 {return PLUS;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 35 "C_Minus.l"
+#line 45 "C_Minus.l"
 {return MINUS;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 36 "C_Minus.l"
+#line 46 "C_Minus.l"
 {return TIMES;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 37 "C_Minus.l"
+#line 47 "C_Minus.l"
 {return DIVIDE;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 38 "C_Minus.l"
+#line 48 "C_Minus.l"
 {return LT;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 39 "C_Minus.l"
+#line 49 "C_Minus.l"
 {return LEQ;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 40 "C_Minus.l"
+#line 50 "C_Minus.l"
 {return GT;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 41 "C_Minus.l"
+#line 51 "C_Minus.l"
 {return GEQ;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 42 "C_Minus.l"
+#line 52 "C_Minus.l"
 {return EQ;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 43 "C_Minus.l"
+#line 53 "C_Minus.l"
 {return NEQ;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 44 "C_Minus.l"
+#line 54 "C_Minus.l"
 {return ASSIGN;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 45 "C_Minus.l"
+#line 55 "C_Minus.l"
 {return SEMICOLON;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 46 "C_Minus.l"
+#line 56 "C_Minus.l"
 {return COMMA;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 47 "C_Minus.l"
+#line 57 "C_Minus.l"
 {return LPAREN;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 48 "C_Minus.l"
+#line 58 "C_Minus.l"
 {return RPAREN;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 49 "C_Minus.l"
+#line 59 "C_Minus.l"
 {return LBRACKET;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 50 "C_Minus.l"
+#line 60 "C_Minus.l"
 {return RBRACKET;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 51 "C_Minus.l"
+#line 61 "C_Minus.l"
 {return LBRACE;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 52 "C_Minus.l"
+#line 62 "C_Minus.l"
 {return RBRACE;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 53 "C_Minus.l"
+#line 63 "C_Minus.l"
 {
                     int ch;
                     while(1){
@@ -928,20 +938,20 @@ YY_RULE_SETUP
 case 29:
 /* rule 29 can match eol */
 YY_RULE_SETUP
-#line 71 "C_Minus.l"
+#line 81 "C_Minus.l"
 {}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 72 "C_Minus.l"
+#line 82 "C_Minus.l"
 {return ERROR;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 74 "C_Minus.l"
+#line 84 "C_Minus.l"
 ECHO;
 	YY_BREAK
-#line 945 "lex.yy.c"
+#line 955 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1946,7 +1956,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 74 "C_Minus.l"
+#line 84 "C_Minus.l"
 
 
 int yywrap(void) {

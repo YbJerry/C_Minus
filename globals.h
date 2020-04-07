@@ -11,6 +11,12 @@ typedef enum {OpK, IdK, NumK, CallK} ExpKind;
 typedef enum {VarK, FunK} DecKind;
 typedef enum {Int, Void, Array} ExpType;
 
+typedef struct _pos Pos;
+struct _pos {
+    int lineNo;
+    int charNo;
+};
+
 typedef struct treeNode TreeNode;
 struct treeNode{
     TreeNode * child[MAXCHILDNUM];
@@ -24,6 +30,7 @@ struct treeNode{
         void *address;
     }attr;
     ExpType type;
+    Pos pos;
 };
 
 typedef struct _TokenStringStack TokenStringStack;

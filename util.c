@@ -1,5 +1,7 @@
 #include "util.h"
 
+extern int lineNo, charNo;
+
 TreeNode * newStmNode(StmKind kind){
     TreeNode * res = (TreeNode *)malloc(sizeof(TreeNode));
     if(res == NULL){
@@ -14,6 +16,8 @@ TreeNode * newStmNode(StmKind kind){
     res->sibling = NULL;
     res->nodeKind = StmK;
     res->kind.stm = kind;
+    res->pos.lineNo = lineNo;
+    res->pos.charNo = charNo;
 
     return res;
 }
@@ -32,6 +36,8 @@ TreeNode * newExpNode(ExpKind kind){
     res->sibling = NULL;
     res->nodeKind = ExpK;
     res->kind.exp = kind;
+    res->pos.lineNo = lineNo;
+    res->pos.charNo = charNo;
     
     return res;
 }
@@ -50,6 +56,8 @@ TreeNode * newDecNode(DecKind kind){
     res->sibling = NULL;
     res->nodeKind = DecK;
     res->kind.dec = kind;
+    res->pos.lineNo = lineNo;
+    res->pos.charNo = charNo;
 
     return res;
 }

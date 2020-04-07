@@ -9,7 +9,8 @@
 
 extern FILE *yyin;
 
-TokenStringStack *tokenStringStack = NULL;
+extern TokenStringStack *tokenStringStack;
+extern int lineNo, charNo;
 
 char *tokenStringPop(){
     if(tokenStringStack){
@@ -86,8 +87,10 @@ type-specifier ID SEMICOLON {
     $$->attr.name = copyString(tokenStringPop());
     $$->type = $1;
 }
-| type-specifier ID LBRACKET NUM RBRACKET SEMICOLON {
+| type-specifier ID LBRACKET NUM RBRACKET SEMICOLON{
     $$ = newDecNode(VarK);
+    $$->child[0] = newExpNode(NumK);
+    $$->child[0]->attr.val = atoi(tokenStringPop());
     $$->attr.name = copyString(tokenStringPop());
     $$->type = Array;
 }

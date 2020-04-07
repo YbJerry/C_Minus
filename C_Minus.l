@@ -7,7 +7,9 @@
 #include "globals.h"
 #include "util.h"
 
-extern TokenStringStack *tokenStringStack;
+TokenStringStack *tokenStringStack = NULL;
+int lineNo = 1;
+int charNo = 1;
 
 void tokenStringPush(char *token){
     TokenStringStack *s = (TokenStringStack *)malloc(sizeof(TokenStringStack));
@@ -25,45 +27,57 @@ number      {digit}+
 
 %%
 
-"if"            {return IF;}
-"else"          {return ELSE;}
-"int"           {return INT;}
-"return"        {return RETURN;}
-"void"          {return VOID;}
-"while"         {return WHILE;}
+"if"            {charNo += strlen(yytext); return IF;}
+"else"          {charNo += strlen(yytext); return ELSE;}
+"int"           {charNo += strlen(yytext); return INT;}
+"return"        {charNo += strlen(yytext); return RETURN;}
+"void"          {charNo += strlen(yytext); return VOID;}
+"while"         {charNo += strlen(yytext); return WHILE;}
 
 {identifier}    {
     tokenStringPush(yytext);
+    charNo += strlen(yytext); 
     return ID;
 }
 {number}        {
     tokenStringPush(yytext);
+    charNo += strlen(yytext); 
     return NUM;
 }
 
-"+"             {return PLUS;}
-"-"             {return MINUS;}
-"*"             {return TIMES;}
-"/"             {return DIVIDE;}
-"<"             {return LT;}
-"<="            {return LEQ;}
-">"             {return GT;}
-">="            {return GEQ;}
-"=="            {return EQ;}
-"!="            {return NEQ;}
-"="             {return ASSIGN;}
-";"             {return SEMICOLON;}
-","             {return COMMA;}
-"("             {return LPAREN;}
-")"             {return RPAREN;}
-"["             {return LBRACKET;}
-"]"             {return RBRACKET;}
-"{"             {return LBRACE;}
-"}"             {return RBRACE;}
+"+"             {charNo += strlen(yytext); return PLUS;}
+"-"             {charNo += strlen(yytext); return MINUS;}
+"*"             {charNo += strlen(yytext); return TIMES;}
+"/"             {charNo += strlen(yytext); return DIVIDE;}
+"<"             {charNo += strlen(yytext); return LT;}
+"<="            {charNo += strlen(yytext); return LEQ;}
+">"             {charNo += strlen(yytext); return GT;}
+">="            {charNo += strlen(yytext); return GEQ;}
+"=="            {charNo += strlen(yytext); return EQ;}
+"!="            {charNo += strlen(yytext); return NEQ;}
+"="             {charNo += strlen(yytext); return ASSIGN;}
+";"             {charNo += strlen(yytext); return SEMICOLON;}
+","             {charNo += strlen(yytext); return COMMA;}
+"("             {charNo += strlen(yytext); return LPAREN;}
+")"             {charNo += strlen(yytext); return RPAREN;}
+"["             {charNo += strlen(yytext); return LBRACKET;}
+"]"             {charNo += strlen(yytext); return RBRACKET;}
+"{"             {charNo += strlen(yytext); return LBRACE;}
+"}"             {charNo += strlen(yytext); return RBRACE;}
 "/*"            {
                     int ch;
                     while(1){
                         if((ch = input()) != '*'){
+                            if(ch == '\n'){
+                                if((ch = input()) != '\r'){
+                                    unput(ch);
+                                }
+                                ++lineNo;
+                                charNo = 1;
+                            }else if(ch == '\r'){
+                                ++lineNo;
+                                charNo = 1;
+                            }
                             continue;
                         }
                         unput(ch);
@@ -77,8 +91,10 @@ number      {digit}+
                         }
                     }
                 }
-
-"\r"|"\n"|"\t"|" "  {}
+"\n\r"          {++lineNo; charNo = 1;}
+"\r"|"\n"       {++lineNo; charNo = 1;}
+"\t"            {}
+" "             {charNo++;}
 .               {return ERROR;}
 
 %%
@@ -86,5 +102,3 @@ number      {digit}+
 int yywrap(void) {
     return 1;
 }
-
-

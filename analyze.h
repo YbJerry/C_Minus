@@ -8,6 +8,6 @@
 
 void buildSymbolTable(TreeNode *tree);
 void typeCheck(TreeNode *tree);
-void typeError(char *message);
+void typeError(char *message, TreeNode *tree);
 
 #endif

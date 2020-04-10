@@ -86,6 +86,8 @@ type-specifier ID SEMICOLON {
     $$ = newDecNode(VarK);
     $$->attr.name = copyString(tokenStringPop());
     $$->type = $1;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 | type-specifier ID LBRACKET NUM RBRACKET SEMICOLON{
     $$ = newDecNode(VarK);
@@ -93,6 +95,8 @@ type-specifier ID SEMICOLON {
     $$->child[0]->attr.val = atoi(tokenStringPop());
     $$->attr.name = copyString(tokenStringPop());
     $$->type = Array;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 ;
 
@@ -108,6 +112,8 @@ type-specifier ID LPAREN params RPAREN compound-stmt {
     $$->child[0] = $4;
     $$->child[1] = $6;
     $$->type = $1;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 ;
 
@@ -124,6 +130,8 @@ param-list COMMA param {
     }
     t->sibling = $3;
     $$ = $1;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 | param { $$ = $1; }
 ;
@@ -133,11 +141,15 @@ type-specifier ID {
     $$ = newDecNode(VarK);
     $$->attr.name = copyString(tokenStringPop());
     $$->type = $1;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 | type-specifier ID LBRACKET RBRACKET{
     $$ = newDecNode(VarK);
     $$->attr.name = copyString(tokenStringPop());
     $$->type = Array;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 ;
 
@@ -146,6 +158,8 @@ LBRACE local-declarations statement-list RBRACE {
     $$ = newStmNode(CompoundK);
     $$->child[0] = $2;
     $$->child[1] = $3;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 ;
 
@@ -204,6 +218,8 @@ IF LPAREN expression RPAREN statement else-stmt {
     $$->child[0] = $3;
     $$->child[1] = $5;
     $$->child[2] = $6;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 ;
 
@@ -219,17 +235,23 @@ WHILE LPAREN expression RPAREN statement {
     $$ = newStmNode(WhileK);
     $$->child[0] = $3;
     $$->child[1] = $5;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 ;
 
 return-stmt:
 RETURN SEMICOLON {
     $$ = newStmNode(ReturnK);
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 
 | RETURN expression SEMICOLON {
     $$ = newStmNode(ReturnK);
     $$->child[0] = $2;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 ;
 
@@ -239,6 +261,8 @@ var ASSIGN expression {
     $$->attr.op = ASSIGN; 
     $$->child[0] = $1;
     $$->child[1] = $3;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 | simple-expression {
     $$ = $1;
@@ -250,12 +274,16 @@ ID {
     $$ = newExpNode(IdK);
     $$->attr.name = copyString(tokenStringPop());
     $$->type = Int;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 | ID LBRACKET expression RBRACKET{
     $$ = newExpNode(IdK);
     $$->attr.name = copyString(tokenStringPop());
     $$->type = Array;
     $$->child[0] = $3;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 ;
 
@@ -265,6 +293,8 @@ additive-expression relop additive-expression{
     $$->attr.op = $2;
     $$->child[0] = $1;
     $$->child[1] = $3;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 | additive-expression { $$ = $1; }
 ;
@@ -284,6 +314,8 @@ additive-expression addop term {
     $$->attr.op = $2;
     $$->child[0] = $1;
     $$->child[1] = $3;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 | term { $$ = $1; }
 ;
@@ -299,6 +331,8 @@ term mulop factor {
     $$->attr.op = $2;
     $$->child[0] = $1;
     $$->child[1] = $3;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 | factor { $$ = $1; }
 ;
@@ -316,6 +350,8 @@ LPAREN expression RPAREN { $$ = $2; }
     char *temp = copyString(tokenStringPop());
     $$ = newExpNode(NumK);
     $$->attr.val = atoi(temp);
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 ;
 
@@ -339,6 +375,8 @@ arg-list COMMA expression {
         t = t->sibling;
     }
     t->sibling = $3;
+    $$->pos.lineNo = lineNo;
+    $$->pos.charNo = charNo;
 }
 | expression {
     $$ = $1;

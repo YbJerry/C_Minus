@@ -3,6 +3,7 @@
 
 #define MAXCHILDNUM 3
 #define MAX_TOKEN_LEN 50
+#define TABDISTANCE 4
 
 typedef int TokenType;
 typedef enum {StmK, ExpK, DecK, ComK} NodeKind;

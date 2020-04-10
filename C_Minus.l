@@ -68,13 +68,13 @@ number      {digit}+
                     int ch;
                     while(1){
                         if((ch = input()) != '*'){
-                            if(ch == '\n'){
-                                if((ch = input()) != '\r'){
+                            if(ch == '\r'){
+                                if((ch = input()) != '\n'){
                                     unput(ch);
                                 }
                                 ++lineNo;
                                 charNo = 1;
-                            }else if(ch == '\r'){
+                            }else if(ch == '\n'){
                                 ++lineNo;
                                 charNo = 1;
                             }
@@ -91,9 +91,9 @@ number      {digit}+
                         }
                     }
                 }
-"\n\r"          {++lineNo; charNo = 1;}
+"\r\n"          {++lineNo; charNo = 1;}
 "\r"|"\n"       {++lineNo; charNo = 1;}
-"\t"            {}
+"\t"            {charNo = (charNo / TABDISTANCE + 1) * TABDISTANCE;}
 " "             {charNo++;}
 .               {return ERROR;}
 

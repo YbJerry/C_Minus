@@ -1,6 +1,7 @@
 #include "analyze.h"
 
 static int isFunc = 0;
+static int location = 0;
 
 void buildSymbolTable(TreeNode *tree){
     if(tree){
@@ -10,11 +11,17 @@ void buildSymbolTable(TreeNode *tree){
             else
                 newSymbolTable(NULL);
         }else if(tree->nodeKind == DecK && tree->kind.dec == FunK){
-            insertSymbol(tree);
+            insertSymbol(tree, 0, 0, location);
             newSymbolTable(tree);
+            location += 2;
             isFunc = 1;
         }else if(tree->nodeKind == DecK && tree->kind.dec == VarK){
-            insertSymbol(tree);
+            insertSymbol(tree, 0, 0, location);
+            if(tree->type == Array){
+                location += tree->child[0]->attr.val;
+            }else{
+                ++location;
+            }
         }//else if(tree->nodeKind == ExpK && (tree->kind.exp == IdK || tree->kind.exp == CallK)){
         //     insertSymbol(tree->attr.name);
         // }

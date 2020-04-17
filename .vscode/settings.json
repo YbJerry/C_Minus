@@ -1,9 +1,13 @@
 {
     "files.associations": {
+        "*.cjson": "jsonc",
+        "*.wxs": "javascript",
+        "*.wxss": "css",
         "*.lex": "lex",
         "SCAN.C": "cpp",
         "MAIN.C": "cpp",
         "ANALYZE.C": "cpp",
-        "UTIL.C": "cpp"
+        "UTIL.C": "cpp",
+        "TM.C": "cpp"
     }
 }

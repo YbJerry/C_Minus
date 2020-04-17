@@ -56,7 +56,7 @@ void delSymbolTable(){
     free(t);
 }
 
-void insertSymbol(TreeNode *node){
+void insertSymbol(TreeNode *node, int lineNo, int charNo, int loc){
     if(!node){
         return;
     }
@@ -69,6 +69,7 @@ void insertSymbol(TreeNode *node){
         t->argsType = NULL;
         t->kind = VarK;
         t->type = node->type;
+        t->loc = loc;
         t->next = symbolTables->bucket[h];
         symbolTables->bucket[h] = t;
 

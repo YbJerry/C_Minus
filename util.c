@@ -252,3 +252,22 @@ void printSymbolTable(SymbolTable *sTable){
         printf("\n");
     }
 }
+
+ExpType judgeType(TreeNode *node){
+    switch(node->type){
+        case Int:
+            return Int;
+        case Void:
+            return Void;
+        case Array:
+            if(node->child[0]){
+                if(node->child[0]->type == Int)
+                    return Int;
+                else{
+                    typeError("数组下标非法", node);
+                    return Int;
+                }
+            }
+            return Array;
+    }
+}

@@ -9,6 +9,7 @@
 extern TreeNode *savedTree;
 extern FILE *yyin;
 extern SymbolTable *symbolTables;
+extern int location;
 
 int main(int argc, char **argv) {
     if(argc > 1){
@@ -24,5 +25,7 @@ int main(int argc, char **argv) {
     // printTree(savedTree);
     buildSymbolTable(savedTree);
     printSymbolTable(symbolTables);
+    delSymbolTable();
+    location = 0;
     return 0;
 }

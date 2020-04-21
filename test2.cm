@@ -3,7 +3,7 @@ element array. */
 
 int x[10];
 
-void minloc(int a[], int low, int high)
+int minloc(int a[], int low, int high)
 {
     int i;
     int x;

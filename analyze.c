@@ -17,11 +17,11 @@ void buildSymbolTable(TreeNode *tree){
             isFunc = 1;
         }else if(tree->nodeKind == DecK && tree->kind.dec == VarK){
             insertSymbol(tree, 0, 0, location);
-            if(tree->type == Array){
-                location += tree->child[0]->attr.val;
-            }else{
-                ++location;
-            }
+            // if(tree->type == Array){
+            //     location += tree->child[0]->attr.val;
+            // }else{
+            //     ++location;
+            // }
         }//else if(tree->nodeKind == ExpK && (tree->kind.exp == IdK || tree->kind.exp == CallK)){
         //     insertSymbol(tree->attr.name);
         // }
@@ -49,11 +49,11 @@ void typeCheck(TreeNode *tree){
                 switch (tree->kind.stm)
                 {
                 case IfK:
-                    if(tree->child[0]->type != Int){
+                    if(judgeType(tree->child[0]) != Int){
                         typeError("if判断条件中出错", tree);
                     }
                 case WhileK:
-                    if(tree->child[0]->type != Int){
+                    if(judgeType(tree->child[0]) != Int){
                         typeError("while判断条件中出错", tree);
                     }
                     break;
@@ -75,7 +75,7 @@ void typeCheck(TreeNode *tree){
                                 typeError("赋值运算符左侧不是有效的左值", tree);
                                 break;
                             }
-                            if(tree->child[0]->type != tree->child[1]->type){
+                            if(judgeType(tree->child[0]) != judgeType(tree->child[1])){
                                 typeError("运算符两侧类型不匹配", tree);
                                 break;
                             }
@@ -90,7 +90,7 @@ void typeCheck(TreeNode *tree){
                         case GEQ:
                         case EQ:
                         case NEQ:
-                            if(tree->child[0]->type != Int || tree->child[1]->type != Int){
+                            if(judgeType(tree->child[0]) != Int || judgeType(tree->child[1]) != Int){
                                 typeError("运算符两侧类型不匹配", tree);
                                 break;
                             }
@@ -108,8 +108,7 @@ void typeCheck(TreeNode *tree){
                     }
                     tree->type = calledArg->type;
                     if(tree->type == Array){
-                        if(tree->child[0]->type != Int && tree->child[0]->type != Array)
-                            typeError("数组下标非法", tree);
+                        judgeType(tree) != Int;
                     }
                     break;
                 }
@@ -176,3 +175,4 @@ void typeCheck(TreeNode *tree){
 void typeError(char *message, TreeNode *tree){
     printf("%d:%d %s\n", tree->pos.lineNo, tree->pos.charNo, message);
 }
+

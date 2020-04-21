@@ -8,6 +8,8 @@
         "MAIN.C": "cpp",
         "ANALYZE.C": "cpp",
         "UTIL.C": "cpp",
-        "TM.C": "cpp"
+        "TM.C": "cpp",
+        "cstdio": "cpp",
+        "stdio.h": "c"
     }
 }

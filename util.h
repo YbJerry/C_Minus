@@ -25,4 +25,6 @@ void printNode(TreeNode *node);
 void printSpaces();
 void printSymbolTable(SymbolTable *sTable);
 
+ExpType judgeType(TreeNode *node);
+
 #endif
